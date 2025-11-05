@@ -56,7 +56,7 @@ const Login: React.FC = () => {
         </form>
       </div>
       <div className="github-link">
-        <a href="https://github.com/mereith/van-nav" target="_blank" rel="noopener noreferrer">
+        <a href="https://github.com/DeerFishSheep/van-nav-enhanced" target="_blank" rel="noopener noreferrer">
           <svg
             height="24"
             width="24"
