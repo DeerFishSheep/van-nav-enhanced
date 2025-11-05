@@ -456,11 +456,8 @@ components:
 paths:
   /api/login:
     post:
-      operationId: login
       security: []
       summary: 用户登录
-      tags:
-        - 认证
       requestBody:
         required: true
         content:
@@ -490,11 +487,8 @@ paths:
 
   /api/logout:
     get:
-      operationId: logout
       security: []
       summary: 用户登出
-      tags:
-        - 认证
       responses:
         "200":
           description: 登出成功
@@ -505,11 +499,8 @@ paths:
 
   /api/:
     get:
-      operationId: getPublicData
       security: []
       summary: 获取所有公开数据
-      tags:
-        - 公共接口
       description: 获取所有工具、分类、子分类、设置和网站配置（隐藏的内容需要登录后才能看到）
       responses:
         "200":
@@ -543,11 +534,8 @@ paths:
 
   /api/searchEngines:
     get:
-      operationId: getSearchEngines
       security: []
       summary: 获取启用的搜索引擎
-      tags:
-        - 公共接口
       description: 获取所有启用的搜索引擎列表
       responses:
         "200":
@@ -566,11 +554,8 @@ paths:
 
   /api/img:
     get:
-      operationId: getImage
       security: []
       summary: 获取 logo 图片
-      tags:
-        - 公共接口
       parameters:
         - name: url
           in: query
@@ -589,11 +574,8 @@ paths:
 
   /manifest.json:
     get:
-      operationId: getManifest
       security: []
       summary: 获取 PWA manifest
-      tags:
-        - 公共接口
       responses:
         "200":
           description: 成功获取 manifest
@@ -630,10 +612,7 @@ paths:
 
   /api/admin/all:
     get:
-      operationId: getAllAdminData
       summary: 管理员获取所有数据
-      tags:
-        - 管理员 - 数据
       security:
         - BearerAuth: []
       description: 获取所有工具、分类、子分类、设置、网站配置、用户信息和API令牌
@@ -680,10 +659,7 @@ paths:
 
   /api/admin/exportTools:
     get:
-      operationId: exportTools
       summary: 导出所有工具
-      tags:
-        - 管理员 - 工具
       security:
         - BearerAuth: []
       responses:
@@ -703,10 +679,7 @@ paths:
 
   /api/admin/importTools:
     post:
-      operationId: importTools
       summary: 导入工具列表
-      tags:
-        - 管理员 - 工具
       security:
         - BearerAuth: []
       description: |
@@ -732,10 +705,7 @@ paths:
 
   /api/admin/tool:
     post:
-      operationId: createTool
       summary: 添加新工具
-      tags:
-        - 管理员 - 工具
       security:
         - BearerAuth: []
       description: |
@@ -760,10 +730,7 @@ paths:
 
   /api/admin/tool/{id}:
     delete:
-      operationId: deleteTool
       summary: 删除工具
-      tags:
-        - 管理员 - 工具
       security:
         - BearerAuth: []
       parameters:
@@ -782,10 +749,7 @@ paths:
                 $ref: "#/components/schemas/StandardResponse"
 
     put:
-      operationId: updateTool
       summary: 更新工具
-      tags:
-        - 管理员 - 工具
       security:
         - BearerAuth: []
       parameters:
@@ -811,10 +775,7 @@ paths:
 
   /api/admin/tools/sort:
     put:
-      operationId: updateToolsSort
       summary: 批量更新工具排序
-      tags:
-        - 管理员 - 工具
       security:
         - BearerAuth: []
       requestBody:
@@ -847,10 +808,7 @@ paths:
 
   /api/admin/catelog:
     post:
-      operationId: createCatelog
       summary: 添加新分类
-      tags:
-        - 管理员 - 分类
       security:
         - BearerAuth: []
       requestBody:
@@ -869,10 +827,7 @@ paths:
 
   /api/admin/catelog/{id}:
     delete:
-      operationId: deleteCatelog
       summary: 删除分类
-      tags:
-        - 管理员 - 分类
       security:
         - BearerAuth: []
       parameters:
@@ -891,10 +846,7 @@ paths:
                 $ref: "#/components/schemas/StandardResponse"
 
     put:
-      operationId: updateCatelog
       summary: 更新分类
-      tags:
-        - 管理员 - 分类
       security:
         - BearerAuth: []
       parameters:
@@ -920,10 +872,7 @@ paths:
 
   /api/admin/subcatelog:
     get:
-      operationId: getAllSubCatelogs
       summary: 获取所有子分类
-      tags:
-        - 管理员 - 子分类
       security:
         - BearerAuth: []
       responses:
@@ -942,10 +891,7 @@ paths:
                           $ref: "#/components/schemas/SubCatelog"
 
     post:
-      operationId: createSubCatelog
       summary: 添加新子分类
-      tags:
-        - 管理员 - 子分类
       security:
         - BearerAuth: []
       requestBody:
@@ -964,10 +910,7 @@ paths:
 
   /api/admin/subcatelog/{catelogId}:
     get:
-      operationId: getSubCatelogsByCatelogId
       summary: 获取特定大分类下的子分类
-      tags:
-        - 管理员 - 子分类
       security:
         - BearerAuth: []
       parameters:
@@ -994,10 +937,7 @@ paths:
 
   /api/admin/subcatelog/{id}:
     put:
-      operationId: updateSubCatelog
       summary: 更新子分类
-      tags:
-        - 管理员 - 子分类
       security:
         - BearerAuth: []
       parameters:
@@ -1022,10 +962,7 @@ paths:
                 $ref: "#/components/schemas/StandardResponse"
 
     delete:
-      operationId: deleteSubCatelog
       summary: 删除子分类
-      tags:
-        - 管理员 - 子分类
       security:
         - BearerAuth: []
       parameters:
@@ -1045,10 +982,7 @@ paths:
 
   /api/admin/subcatelogs/sort:
     put:
-      operationId: updateSubCatelogsSort
       summary: 批量更新子分类排序
-      tags:
-        - 管理员 - 子分类
       security:
         - BearerAuth: []
       requestBody:
@@ -1069,10 +1003,7 @@ paths:
 
   /api/admin/searchEngine:
     get:
-      operationId: getAllSearchEngines
       summary: 获取所有搜索引擎
-      tags:
-        - 管理员 - 搜索引擎
       security:
         - BearerAuth: []
       responses:
@@ -1091,10 +1022,7 @@ paths:
                           $ref: "#/components/schemas/SearchEngine"
 
     post:
-      operationId: createSearchEngine
       summary: 添加搜索引擎
-      tags:
-        - 管理员 - 搜索引擎
       security:
         - BearerAuth: []
       requestBody:
@@ -1113,10 +1041,7 @@ paths:
 
   /api/admin/searchEngine/{id}:
     put:
-      operationId: updateSearchEngine
       summary: 更新搜索引擎
-      tags:
-        - 管理员 - 搜索引擎
       security:
         - BearerAuth: []
       parameters:
@@ -1141,10 +1066,7 @@ paths:
                 $ref: "#/components/schemas/StandardResponse"
 
     delete:
-      operationId: deleteSearchEngine
       summary: 删除搜索引擎
-      tags:
-        - 管理员 - 搜索引擎
       security:
         - BearerAuth: []
       parameters:
@@ -1164,10 +1086,7 @@ paths:
 
   /api/admin/searchEngines/sort:
     put:
-      operationId: updateSearchEnginesSort
       summary: 批量更新搜索引擎排序
-      tags:
-        - 管理员 - 搜索引擎
       security:
         - BearerAuth: []
       requestBody:
@@ -1188,10 +1107,7 @@ paths:
 
   /api/admin/apiToken:
     post:
-      operationId: createApiToken
       summary: 添加 API Token
-      tags:
-        - 管理员 - API Token
       security:
         - BearerAuth: []
       requestBody:
@@ -1222,10 +1138,7 @@ paths:
 
   /api/admin/apiToken/{id}:
     delete:
-      operationId: deleteApiToken
       summary: 删除 API Token
-      tags:
-        - 管理员 - API Token
       security:
         - BearerAuth: []
       parameters:
@@ -1245,10 +1158,7 @@ paths:
 
   /api/admin/setting:
     put:
-      operationId: updateSettings
       summary: 更新系统设置
-      tags:
-        - 管理员 - 设置
       security:
         - BearerAuth: []
       requestBody:
@@ -1267,10 +1177,7 @@ paths:
 
   /api/admin/siteConfig:
     put:
-      operationId: updateSiteConfig
       summary: 更新网站配置
-      tags:
-        - 管理员 - 设置
       security:
         - BearerAuth: []
       requestBody:
@@ -1289,10 +1196,7 @@ paths:
 
   /api/admin/user:
     put:
-      operationId: updateUser
       summary: 更新用户信息
-      tags:
-        - 管理员 - 用户
       security:
         - BearerAuth: []
       requestBody:

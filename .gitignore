@@ -140,3 +140,4 @@ push-to-github.sh
 
 # 不推送到 GitHub 的文件夹（包含推送脚本和私有文档）
 不被推送到github的文件/
+api-website/openapi.yaml.backup
