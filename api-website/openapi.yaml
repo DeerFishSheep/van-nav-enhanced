@@ -1,12 +1,184 @@
 openapi: 3.1.0
+
 info:
-  title: Van Nav API
-  description: Van Nav 导航系统的 API 文档
-  version: 2.0.0
+  title: Van Nav Enhanced API
+  version: 1.0-enhanced
+  description: |
+    # 🚀 Van Nav Enhanced - 增强版导航站 API
+    
+    基于 [Van Nav v1.12.1](https://github.com/Mereithhh/van-nav) 的增强版本，新增子分类系统、智能排序等强大功能。
+    
+    ## ✨ 增强版新特性
+    
+    ### 🎯 核心功能
+    - **子分类系统**: 支持在大分类下创建子分类，更灵活的组织方式
+    - **智能排序**: 基于 COUNT(*) 的自动序号管理，避免序号冲突
+    - **自动分类**: API 调用时自动创建不存在的分类/子分类
+    - **删除保护**: 包含书签的分类/子分类无法删除
+    - **字符串化子分类**: 使用字符串指定子分类，更简洁易用
+    
+    ### 📊 数据管理
+    - **书签管理**: CRUD 操作，支持导入/导出、批量排序
+    - **分类管理**: 大分类和子分类的完整管理
+    - **搜索引擎**: 自定义搜索引擎配置
+    - **站点配置**: 完整的站点设置和主题配置
+    
+    ## 🔐 认证说明
+    
+    大部分管理接口需要 JWT 认证。认证流程：
+    
+    1. 调用 `/api/login` 获取 JWT token
+    2. 在后续请求的 Header 中添加：`Authorization: Bearer {token}`
+    3. Token 有效期：登录后持续有效，直到登出
+    
+    **示例**：
+    ```bash
+    # 1. 登录
+    curl -X POST http://localhost:6412/api/login \
+      -H "Content-Type: application/json" \
+      -d '{"name":"admin","password":"admin"}'
+    
+    # 2. 使用 token
+    curl http://localhost:6412/api/admin/all \
+      -H "Authorization: Bearer eyJhbG..."
+    ```
+    
+    ## 📚 快速开始
+    
+    ### 添加书签（自动创建分类）
+    
+    ```bash
+    curl -X POST http://localhost:6412/api/admin/tool \
+      -H "Authorization: Bearer {token}" \
+      -H "Content-Type: application/json" \
+      -d '{
+        "name": "GitHub",
+        "url": "https://github.com",
+        "catelog": "开发工具",
+        "subCatelog": "代码托管",
+        "desc": "全球最大的代码托管平台"
+      }'
+    ```
+    
+    系统会自动：
+    - 创建"开发工具"大分类（如果不存在）
+    - 创建"代码托管"子分类（如果不存在）
+    - 添加书签并分配序号
+    
+    ### 获取所有数据
+    
+    ```bash
+    # 公开接口，无需认证
+    curl http://localhost:6412/api/
+    ```
+    
+    返回所有书签、分类、子分类、设置等数据。
+    
+    ## 🎨 API 设计原则
+    
+    - **RESTful 风格**: 标准的 REST API 设计
+    - **JSON 格式**: 统一使用 JSON 进行数据交换
+    - **友好错误**: 详细的错误信息和状态码
+    - **自动化**: 最大程度减少手动配置
+    
+    ## 📖 更多资源
+    
+    - [GitHub 仓库](https://github.com/DeerFishSheep/van-nav-enhanced)
+    - [问题反馈](https://github.com/DeerFishSheep/van-nav-enhanced/issues)
+    - [原项目](https://github.com/Mereithhh/van-nav)
+    
+  contact:
+    name: DeerFishSheep
+    url: https://github.com/DeerFishSheep/van-nav-enhanced
+    
+  license:
+    name: MIT
+    url: https://github.com/DeerFishSheep/van-nav-enhanced/blob/main/LICENSE
+    
+  x-logo:
+    url: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY2N2VlYSIgcng9IjIwIi8+PHRleHQgeD0iNTAiIHk9IjY1IiBmb250LXNpemU9IjUwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSI+8J+TmjwvdGV4dD48L3N2Zz4='
+    backgroundColor: '#667eea'
+    altText: 'Van Nav Enhanced Logo'
+
+externalDocs:
+  description: 完整的项目文档和使用指南
+  url: https://github.com/DeerFishSheep/van-nav-enhanced/blob/main/README.md
 
 servers:
   - url: http://localhost:6412
-    description: 开发环境服务器
+    description: 本地开发环境
+  - url: http://localhost:6412/api
+    description: 本地开发环境（API 前缀）
+  - url: https://your-domain.com
+    description: 生产环境（替换为您的域名）
+  - url: https://your-domain.com/api
+    description: 生产环境 API 地址
+
+tags:
+  - name: 认证
+    description: |
+      用户登录、登出和令牌管理。
+      
+      **默认账号**: admin / admin（首次使用后请及时修改）
+      
+  - name: 公共接口
+    description: |
+      无需认证即可访问的接口，包括获取书签、分类、搜索引擎等公开数据。
+      
+      **注意**: 标记为隐藏(hide=true)的内容需要登录后才能查看。
+      
+  - name: 管理员 - 数据
+    description: 获取完整的管理数据，包括所有书签、分类、设置等
+    
+  - name: 管理员 - 工具
+    description: |
+      书签管理接口（增删改查）。
+      
+      **增强功能**：
+      - ✅ 自动创建不存在的大分类
+      - ✅ 自动创建不存在的子分类
+      - ✅ 空子分类自动分配到"默认"
+      - ✅ 自动序号管理（无需手动指定）
+      - ✅ 智能排序调整（修改序号时自动重排）
+      
+  - name: 管理员 - 分类
+    description: |
+      大分类管理接口（增删改查）。
+      
+      **删除保护**: 包含书签的分类无法删除。
+      
+  - name: 管理员 - 子分类
+    description: |
+      子分类管理接口（增删改查）。
+      
+      **增强功能**：
+      - ✅ 子分类独立排序（仅在所属大分类下计算）
+      - ✅ 删除保护（包含书签的子分类无法删除）
+      - ✅ 自动序号管理
+      
+  - name: 管理员 - 搜索引擎
+    description: |
+      搜索引擎管理接口（增删改查）。
+      
+      支持自定义搜索引擎，如 Google、Bing、百度等。
+      
+  - name: 管理员 - API Token
+    description: |
+      API Token 管理接口。
+      
+      用于程序化访问 API，无需每次登录。
+      
+  - name: 管理员 - 设置
+    description: |
+      系统设置和站点配置管理。
+      
+      包括网站标题、图标、主题、跳转方式等。
+      
+  - name: 管理员 - 用户
+    description: |
+      用户信息管理接口。
+      
+      **重要**: 修改密码后需要重新登录。
 
 components:
   schemas:
