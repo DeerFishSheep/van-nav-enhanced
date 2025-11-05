@@ -1,0 +1,1281 @@
+openapi: 3.1.0
+info:
+  title: Van Nav API
+  description: Van Nav 导航系统的 API 文档
+  version: 2.0.0
+
+servers:
+  - url: http://localhost:6412
+    description: 开发环境服务器
+
+components:
+  schemas:
+    Tool:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 工具ID
+        name:
+          type: string
+          description: 工具名称
+        url:
+          type: string
+          description: 工具链接
+        logo:
+          type: string
+          description: Logo URL
+        catelog:
+          type: string
+          description: 大分类名称
+        subCatelog:
+          type: string
+          description: 子分类名称
+        subCatelogId:
+          type: integer
+          description: 子分类ID
+        desc:
+          type: string
+          description: 描述
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    AddToolDto:
+      type: object
+      required:
+        - name
+        - url
+        - catelog
+      properties:
+        name:
+          type: string
+          description: 工具名称
+        url:
+          type: string
+          description: 工具链接
+        logo:
+          type: string
+          description: Logo URL（可选，为空则自动获取）
+        catelog:
+          type: string
+          description: 大分类名称（不存在会自动创建）
+        subCatelog:
+          type: string
+          description: 子分类名称（可选，为空时分配到"默认"子分类，不存在会自动创建）
+        desc:
+          type: string
+          description: 描述
+        sort:
+          type: integer
+          description: 排序值（可选，为空时自动分配）
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    UpdateToolDto:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: 工具ID
+        name:
+          type: string
+          description: 工具名称
+        url:
+          type: string
+          description: 工具链接
+        logo:
+          type: string
+          description: Logo URL
+        catelog:
+          type: string
+          description: 大分类名称
+        subCatelog:
+          type: string
+          description: 子分类名称
+        desc:
+          type: string
+          description: 描述
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    UpdateToolsSortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 工具ID
+        sort:
+          type: integer
+          description: 新的排序值
+
+    Catelog:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 分类ID
+        name:
+          type: string
+          description: 分类名称
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    AddCatelogDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: 分类名称
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    UpdateCatelogDto:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: 分类ID
+        name:
+          type: string
+          description: 分类名称
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    SubCatelog:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 子分类ID
+        name:
+          type: string
+          description: 子分类名称
+        catelogId:
+          type: integer
+          description: 所属大分类ID
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    AddSubCatelogDto:
+      type: object
+      required:
+        - name
+        - catelogId
+      properties:
+        name:
+          type: string
+          description: 子分类名称
+        catelogId:
+          type: integer
+          description: 所属大分类ID
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    UpdateSubCatelogDto:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: 子分类ID
+        name:
+          type: string
+          description: 子分类名称
+        catelogId:
+          type: integer
+          description: 所属大分类ID
+        sort:
+          type: integer
+          description: 排序值
+        hide:
+          type: boolean
+          description: 是否隐藏
+
+    UpdateSubCatelogsSortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 子分类ID
+        sort:
+          type: integer
+          description: 新的排序值
+
+    SearchEngine:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 搜索引擎ID
+        name:
+          type: string
+          description: 搜索引擎名称
+        baseUrl:
+          type: string
+          description: 基础URL
+        queryParam:
+          type: string
+          description: 查询参数名
+        logo:
+          type: string
+          description: Logo URL
+        sort:
+          type: integer
+          description: 排序值
+        enabled:
+          type: boolean
+          description: 是否启用
+
+    AddSearchEngineDto:
+      type: object
+      required:
+        - name
+        - baseUrl
+        - queryParam
+      properties:
+        name:
+          type: string
+          description: 搜索引擎名称
+        baseUrl:
+          type: string
+          description: 基础URL
+        queryParam:
+          type: string
+          description: 查询参数名
+        logo:
+          type: string
+          description: Logo URL
+        sort:
+          type: integer
+          description: 排序值
+        enabled:
+          type: boolean
+          description: 是否启用
+
+    UpdateSearchEngineDto:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          description: 搜索引擎ID
+        name:
+          type: string
+          description: 搜索引擎名称
+        baseUrl:
+          type: string
+          description: 基础URL
+        queryParam:
+          type: string
+          description: 查询参数名
+        logo:
+          type: string
+          description: Logo URL
+        sort:
+          type: integer
+          description: 排序值
+        enabled:
+          type: boolean
+          description: 是否启用
+
+    UpdateSearchEngineSortDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 搜索引擎ID
+        sort:
+          type: integer
+          description: 新的排序值
+
+    Setting:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 设置ID
+        favicon:
+          type: string
+          description: 网站图标URL
+        title:
+          type: string
+          description: 网站标题
+        govRecord:
+          type: string
+          description: 备案号
+        logo192:
+          type: string
+          description: 192x192 Logo URL
+        logo512:
+          type: string
+          description: 512x512 Logo URL
+        hideAdmin:
+          type: boolean
+          description: 是否隐藏管理员入口
+        hideGithub:
+          type: boolean
+          description: 是否隐藏GitHub链接
+        hideToggleJumpTarget:
+          type: boolean
+          description: 是否隐藏跳转目标切换
+        jumpTargetBlank:
+          type: boolean
+          description: 是否在新标签页打开链接
+
+    SiteConfig:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: 配置ID
+        noImageMode:
+          type: boolean
+          description: 无图模式
+        compactMode:
+          type: boolean
+          description: 紧凑模式
+
+    LoginDto:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+          description: 用户名
+        password:
+          type: string
+          description: 密码
+
+    UpdateUserDto:
+      type: object
+      required:
+        - name
+        - password
+      properties:
+        name:
+          type: string
+          description: 用户名
+        password:
+          type: string
+          description: 密码
+
+    ApiToken:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Token ID
+        name:
+          type: string
+          description: Token 名称
+        value:
+          type: string
+          description: Token 值
+        disabled:
+          type: integer
+          description: 是否禁用（0=启用, 1=禁用）
+
+    AddTokenDto:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Token 名称
+
+    StandardResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: 请求是否成功
+        message:
+          type: string
+          description: 响应消息
+        data:
+          type: object
+          description: 响应数据
+
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: 请求是否成功（通常为false）
+        errorMessage:
+          type: string
+          description: 错误消息
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT 认证令牌
+
+paths:
+  /api/login:
+    post:
+      security: []
+      summary: 用户登录
+      tags:
+        - 认证
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginDto"
+      responses:
+        "200":
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          user:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                          token:
+                            type: string
+
+  /api/logout:
+    get:
+      security: []
+      summary: 用户登出
+      tags:
+        - 认证
+      responses:
+        "200":
+          description: 登出成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/:
+    get:
+      security: []
+      summary: 获取所有公开数据
+      tags:
+        - 公共接口
+      description: 获取所有工具、分类、子分类、设置和网站配置（隐藏的内容需要登录后才能看到）
+      responses:
+        "200":
+          description: 成功获取所有数据
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          tools:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Tool"
+                          catelogs:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Catelog"
+                          subcatelogs:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/SubCatelog"
+                          setting:
+                            $ref: "#/components/schemas/Setting"
+                          siteConfig:
+                            $ref: "#/components/schemas/SiteConfig"
+
+  /api/searchEngines:
+    get:
+      security: []
+      summary: 获取启用的搜索引擎
+      tags:
+        - 公共接口
+      description: 获取所有启用的搜索引擎列表
+      responses:
+        "200":
+          description: 成功获取搜索引擎列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SearchEngine"
+
+  /api/img:
+    get:
+      security: []
+      summary: 获取 logo 图片
+      tags:
+        - 公共接口
+      parameters:
+        - name: url
+          in: query
+          required: true
+          schema:
+            type: string
+          description: 图片URL
+      responses:
+        "200":
+          description: 成功获取图片
+          content:
+            image/*:
+              schema:
+                type: string
+                format: binary
+
+  /manifest.json:
+    get:
+      security: []
+      summary: 获取 PWA manifest
+      tags:
+        - 公共接口
+      responses:
+        "200":
+          description: 成功获取 manifest
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  short_name:
+                    type: string
+                  name:
+                    type: string
+                  icons:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        src:
+                          type: string
+                        type:
+                          type: string
+                        sizes:
+                          type: string
+                  start_url:
+                    type: string
+                  display:
+                    type: string
+                  scope:
+                    type: string
+                  theme_color:
+                    type: string
+                  background_color:
+                    type: string
+
+  /api/admin/all:
+    get:
+      summary: 管理员获取所有数据
+      tags:
+        - 管理员 - 数据
+      security:
+        - BearerAuth: []
+      description: 获取所有工具、分类、子分类、设置、网站配置、用户信息和API令牌
+      responses:
+        "200":
+          description: 成功获取所有数据
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          tools:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Tool"
+                          catelogs:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Catelog"
+                          subcatelogs:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/SubCatelog"
+                          setting:
+                            $ref: "#/components/schemas/Setting"
+                          siteConfig:
+                            $ref: "#/components/schemas/SiteConfig"
+                          user:
+                            type: object
+                            properties:
+                              name:
+                                type: string
+                              id:
+                                type: integer
+                          tokens:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/ApiToken"
+
+  /api/admin/exportTools:
+    get:
+      summary: 导出所有工具
+      tags:
+        - 管理员 - 工具
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: 成功导出工具列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/Tool"
+
+  /api/admin/importTools:
+    post:
+      summary: 导入工具列表
+      tags:
+        - 管理员 - 工具
+      security:
+        - BearerAuth: []
+      description: |
+        批量导入工具。导入时会自动处理：
+        - 如果大分类不存在，会自动创建
+        - 如果子分类为空，会自动分配到"默认"子分类
+        - 如果子分类不存在，会自动创建
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/Tool"
+      responses:
+        "200":
+          description: 导入成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/tool:
+    post:
+      summary: 添加新工具
+      tags:
+        - 管理员 - 工具
+      security:
+        - BearerAuth: []
+      description: |
+        添加新工具。说明：
+        - catelog: 大分类名称（必填），不存在会自动创建
+        - subCatelog: 子分类名称（可选），为空时自动分配到"默认"子分类，不存在会自动创建
+        - sort: 排序值（可选），为空时自动分配为最大值+1
+        - logo: Logo URL（可选），为空则自动获取
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddToolDto"
+      responses:
+        "200":
+          description: 添加成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/tool/{id}:
+    delete:
+      summary: 删除工具
+      tags:
+        - 管理员 - 工具
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 工具ID
+      responses:
+        "200":
+          description: 删除成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+    put:
+      summary: 更新工具
+      tags:
+        - 管理员 - 工具
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 工具ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateToolDto"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/tools/sort:
+    put:
+      summary: 批量更新工具排序
+      tags:
+        - 管理员 - 工具
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/UpdateToolsSortDto"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+        "400":
+          description: 请求参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: 服务器内部错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/admin/catelog:
+    post:
+      summary: 添加新分类
+      tags:
+        - 管理员 - 分类
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCatelogDto"
+      responses:
+        "200":
+          description: 添加分类成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/catelog/{id}:
+    delete:
+      summary: 删除分类
+      tags:
+        - 管理员 - 分类
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 分类ID
+      responses:
+        "200":
+          description: 删除分类成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+    put:
+      summary: 更新分类
+      tags:
+        - 管理员 - 分类
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 分类ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCatelogDto"
+      responses:
+        "200":
+          description: 更新分类成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/subcatelog:
+    get:
+      summary: 获取所有子分类
+      tags:
+        - 管理员 - 子分类
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: 成功获取所有子分类
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SubCatelog"
+
+    post:
+      summary: 添加新子分类
+      tags:
+        - 管理员 - 子分类
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddSubCatelogDto"
+      responses:
+        "200":
+          description: 添加子分类成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/subcatelog/{catelogId}:
+    get:
+      summary: 获取特定大分类下的子分类
+      tags:
+        - 管理员 - 子分类
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: catelogId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 大分类ID
+      responses:
+        "200":
+          description: 成功获取子分类列表
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SubCatelog"
+
+  /api/admin/subcatelog/{id}:
+    put:
+      summary: 更新子分类
+      tags:
+        - 管理员 - 子分类
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 子分类ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSubCatelogDto"
+      responses:
+        "200":
+          description: 更新子分类成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+    delete:
+      summary: 删除子分类
+      tags:
+        - 管理员 - 子分类
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 子分类ID
+      responses:
+        "200":
+          description: 删除子分类成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/subcatelogs/sort:
+    put:
+      summary: 批量更新子分类排序
+      tags:
+        - 管理员 - 子分类
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/UpdateSubCatelogsSortDto"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/searchEngine:
+    get:
+      summary: 获取所有搜索引擎
+      tags:
+        - 管理员 - 搜索引擎
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: 成功获取所有搜索引擎
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/SearchEngine"
+
+    post:
+      summary: 添加搜索引擎
+      tags:
+        - 管理员 - 搜索引擎
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddSearchEngineDto"
+      responses:
+        "200":
+          description: 添加搜索引擎成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/searchEngine/{id}:
+    put:
+      summary: 更新搜索引擎
+      tags:
+        - 管理员 - 搜索引擎
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 搜索引擎ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSearchEngineDto"
+      responses:
+        "200":
+          description: 更新搜索引擎成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+    delete:
+      summary: 删除搜索引擎
+      tags:
+        - 管理员 - 搜索引擎
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 搜索引擎ID
+      responses:
+        "200":
+          description: 删除搜索引擎成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/searchEngines/sort:
+    put:
+      summary: 批量更新搜索引擎排序
+      tags:
+        - 管理员 - 搜索引擎
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/UpdateSearchEngineSortDto"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/apiToken:
+    post:
+      summary: 添加 API Token
+      tags:
+        - 管理员 - API Token
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddTokenDto"
+      responses:
+        "200":
+          description: 添加 Token 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/StandardResponse"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                          value:
+                            type: string
+                          name:
+                            type: string
+
+  /api/admin/apiToken/{id}:
+    delete:
+      summary: 删除 API Token
+      tags:
+        - 管理员 - API Token
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Token ID
+      responses:
+        "200":
+          description: 删除 Token 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/setting:
+    put:
+      summary: 更新系统设置
+      tags:
+        - 管理员 - 设置
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Setting"
+      responses:
+        "200":
+          description: 更新设置成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/siteConfig:
+    put:
+      summary: 更新网站配置
+      tags:
+        - 管理员 - 设置
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteConfig"
+      responses:
+        "200":
+          description: 更新网站配置成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+  /api/admin/user:
+    put:
+      summary: 更新用户信息
+      tags:
+        - 管理员 - 用户
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserDto"
+      responses:
+        "200":
+          description: 更新用户信息成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StandardResponse"
+
+security:
+  - BearerAuth: []

@@ -1,0 +1,43 @@
+.github-link-box {
+  position: fixed;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.github-link-box:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.github-link-box svg {
+  fill: #3d3d3d;
+  transition: all 0.3s;
+}
+
+.github-link-box:hover svg {
+  fill: #121212;
+}
+
+/* 暗色模式 */
+body.dark-mode .github-link-box {
+  background-color: #2a2a2a;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .github-link-box:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .github-link-box svg {
+  fill: #e8e8e8;
+}
+
+body.dark-mode .github-link-box:hover svg {
+  fill: #ffffff;
+}

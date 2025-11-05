@@ -1,0 +1,122 @@
+/* 管理按钮基础样式 */
+.admin-button-box {
+  position: fixed;
+  z-index: 999;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.admin-button-box:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.admin-button-box svg {
+  color: #272e3b;
+  transition: color 0.3s ease;
+}
+
+.admin-button-box:hover svg {
+  color: #1890ff;
+}
+
+/* 暗色模式 */
+body.dark-mode .admin-button-box {
+  background-color: #2a2a2a;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .admin-button-box:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .admin-button-box svg {
+  color: #e8e8e8;
+}
+
+body.dark-mode .admin-button-box:hover svg {
+  color: #40a9ff;
+}
+
+/* 响应式设计 - 小屏幕 (<500px) */
+@media (max-width: 500px) {
+  .admin-button-box {
+    right: 10px;
+    bottom: 74px;
+    width: 36px;
+    height: 36px;
+  }
+  
+  .admin-button-box.hide-github {
+    bottom: 44px;
+  }
+  
+  .admin-button-box svg {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* 响应式设计 - 中屏幕 (500-700px) */
+@media (max-width: 700px) and (min-width: 500px) {
+  .admin-button-box {
+    right: 14px;
+    bottom: 88px;
+    width: 40px;
+    height: 40px;
+  }
+  
+  .admin-button-box.hide-github {
+    bottom: 49px;
+  }
+  
+  .admin-button-box svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* 响应式设计 - 大屏幕 (700-1060px) */
+@media (max-width: 1060px) and (min-width: 700px) {
+  .admin-button-box {
+    right: 10px;
+    bottom: 94px;
+    width: 44px;
+    height: 44px;
+  }
+  
+  .admin-button-box.hide-github {
+    bottom: 54px;
+  }
+  
+  .admin-button-box svg {
+    width: 26px;
+    height: 26px;
+  }
+}
+
+/* 响应式设计 - 超大屏幕 (>1060px) */
+@media (min-width: 1060px) {
+  .admin-button-box {
+    right: 10px;
+    bottom: 126px;
+    width: 50px;
+    height: 50px;
+  }
+  
+  .admin-button-box.hide-github {
+    bottom: 76px;
+  }
+  
+  .admin-button-box svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+
