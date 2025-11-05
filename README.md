@@ -5,7 +5,27 @@
 > **基于版本**: v1.12.1  
 > **本版本**: 增强版，在原版基础上新增子分类系统、智能排序等功能
 
-一个轻量的导航站，现在有搜索引擎集成了，很适合作为主页使用。有配套的[浏览器插件](https://github.com/Mereithhh/van-nav-extension)和 API。
+## API 文档
+
+本导航站支持 API，可以用自己的方法添加工具。
+
+> **增强版 API 文档**：[https://deerfishsheep.github.io/van-nav-enhanced/api-website/](https://deerfishsheep.github.io/van-nav-enhanced/api-website/)
+
+### 快速示例
+
+**添加书签**：
+```bash
+curl -X POST http://localhost:6412/api/admin/tool \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "GitHub",
+    "url": "https://github.com",
+    "catelog": "开发工具",
+    "subCatelog": "代码托管",
+    "desc": "代码托管平台"
+  }'
+```
 
 ## ✨ 增强版新增功能
 
@@ -239,41 +259,6 @@ server {
 具有一键增加工具，快速打开管理后台和主站等功能。具体自行探索哦。
 
 > 注意：插件为原作者开发，可能不完全兼容本增强版的新功能（如子分类）。
-
-## API 文档
-
-本导航站支持 API，可以用自己的方法添加工具。
-
-> **增强版 API 文档**：[https://deerfishsheep.github.io/van-nav-enhanced/api-website/](https://deerfishsheep.github.io/van-nav-enhanced/api-website/)
-
-### API 新增功能
-
-- ✅ 使用字符串指定子分类（`subCatelog`）
-- ✅ 自动创建不存在的大分类和子分类
-- ✅ 空子分类自动分配到"默认"
-- ✅ 子分类管理接口（CRUD）
-- ✅ 智能排序验证
-
-### 快速示例
-
-**添加书签**：
-```bash
-curl -X POST http://localhost:6412/api/admin/tool \
-  -H "Authorization: Bearer YOUR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "GitHub",
-    "url": "https://github.com",
-    "catelog": "开发工具",
-    "subCatelog": "代码托管",
-    "desc": "代码托管平台"
-  }'
-```
-
-系统会自动：
-1. 创建"开发工具"大分类（如果不存在）
-2. 在"开发工具"下创建"代码托管"子分类（如果不存在）
-3. 添加书签到对应位置
 
 ## FAQ
 
