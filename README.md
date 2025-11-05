@@ -110,7 +110,7 @@
 
 1. **下载发布包**
    ```bash
-   wget https://github.com/your-username/van-nav/releases/latest/download/van-nav-linux-amd64-release.tar.gz
+   wget https://github.com/DeerFishSheep/van-nav-enhanced/releases/latest/download/van-nav-linux-amd64-release.tar.gz
    ```
 
 2. **解压**
@@ -189,8 +189,8 @@ chmod +x van-nav
 **构建步骤**：
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/van-nav.git
-cd van-nav
+git clone https://github.com/DeerFishSheep/van-nav-enhanced.git
+cd van-nav-enhanced
 
 # 运行构建脚本
 chmod +x build-linux.sh
@@ -244,8 +244,7 @@ server {
 
 本导航站支持 API，可以用自己的方法添加工具。
 
-> **增强版 API 文档**：[https://your-username.github.io/van-nav/](https://your-username.github.io/van-nav/)  
-> （部署后请替换为您的实际 GitHub Pages 地址）
+> **增强版 API 文档**：[https://deerfishsheep.github.io/van-nav-enhanced/](https://deerfishsheep.github.io/van-nav-enhanced/)
 
 ### API 新增功能
 

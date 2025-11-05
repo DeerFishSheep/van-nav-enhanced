@@ -137,3 +137,6 @@ BUILD_GUIDE.md
 
 # 推送脚本（包含 Token，不要上传）
 push-to-github.sh
+
+# 不推送到 GitHub 的文件夹（包含推送脚本和私有文档）
+不被推送到github的文件/
