@@ -244,7 +244,7 @@ server {
 
 本导航站支持 API，可以用自己的方法添加工具。
 
-> **增强版 API 文档**：[https://deerfishsheep.github.io/van-nav-enhanced/](https://deerfishsheep.github.io/van-nav-enhanced/)
+> **增强版 API 文档**：[https://deerfishsheep.github.io/van-nav-enhanced/api-website/](https://deerfishsheep.github.io/van-nav-enhanced/api-website/)
 
 ### API 新增功能
 
