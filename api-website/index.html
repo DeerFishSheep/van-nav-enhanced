@@ -1,588 +1,838 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Van Nav Enhanced - 增强版导航站 API 文档，支持子分类、智能排序等功能">
-  <meta name="keywords" content="Van Nav, API, 导航站, 书签管理, RESTful API">
-  
-  <title>Van Nav Enhanced API 文档 - 增强版导航站</title>
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="https://github.githubassets.com/favicons/favicon.png">
-  
-  <!-- Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  
-  <style>
-    /* 全局样式 */
-    * {
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Van Nav Enhanced API - 增强版导航站 API 文档</title>
+    <meta name="description" content="Van Nav Enhanced API 文档 - 功能强大的导航站 RESTful API">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📚</text></svg>">
+    
+    <!-- Swagger UI CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.5/swagger-ui.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ========== 全局重置和基础样式 ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      background: #f8f9fa;
-      overflow-x: hidden;
-    }
+        :root {
+            --primary-color: #667eea;
+            --primary-dark: #5a67d8;
+            --secondary-color: #764ba2;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --error-color: #f56565;
+            --dark-bg: #1a202c;
+            --dark-card: #2d3748;
+            --light-bg: #f7fafc;
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+        }
 
-    /* 顶部导航栏 */
-    .top-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 0;
-      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      border-bottom: 3px solid rgba(255, 255, 255, 0.1);
-    }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-    .header-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 20px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 15px;
-    }
+        /* ========== 顶部导航栏 ========== */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
 
-    .logo-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-    .logo {
-      width: 48px;
-      height: 48px;
-      background: white;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: bold;
-      color: #667eea;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-      transition: transform 0.3s ease;
-    }
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-    .logo:hover {
-      transform: scale(1.1) rotate(5deg);
-    }
+        .logo {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .title-section h1 {
-      margin: 0;
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
+        .logo:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 28px rgba(102, 126, 234, 0.4);
+        }
 
-    .title-section p {
-      margin: 5px 0 0 0;
-      font-size: 14px;
-      opacity: 0.9;
-      font-weight: 400;
-    }
+        .brand-info h1 {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
 
-    .version-badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-    }
+        .brand-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin: 4px 0 0 0;
+            font-weight: 500;
+        }
 
-    .header-right {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-    }
+        .version-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            animation: pulse 2s infinite;
+        }
 
-    .header-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 20px;
-      background: rgba(255, 255, 255, 0.2);
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      backdrop-filter: blur(10px);
-    }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
 
-    .header-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
+        .nav-right {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
 
-    .header-btn.primary {
-      background: white;
-      color: #667eea;
-      font-weight: 600;
-    }
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: white;
+            color: var(--primary-color);
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 2px solid var(--primary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
 
-    .header-btn.primary:hover {
-      background: #f8f9fa;
-      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
-    }
+        .nav-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
 
-    /* 快速导航栏 */
-    .quick-nav {
-      background: white;
-      border-bottom: 1px solid #e9ecef;
-      padding: 15px 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
 
-    .quick-nav-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 30px;
-      display: flex;
-      gap: 15px;
-      overflow-x: auto;
-      scrollbar-width: thin;
-    }
+        .nav-btn.primary:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.5);
+        }
 
-    .quick-nav-content::-webkit-scrollbar {
-      height: 4px;
-    }
+        /* ========== 欢迎横幅 ========== */
+        .welcome-banner {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            text-align: center;
+            border-bottom: 3px solid rgba(102, 126, 234, 0.2);
+        }
 
-    .quick-nav-content::-webkit-scrollbar-thumb {
-      background: #dee2e6;
-      border-radius: 2px;
-    }
+        .welcome-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
 
-    .quick-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 16px;
-      background: #f8f9fa;
-      color: #495057;
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-      white-space: nowrap;
-      transition: all 0.2s ease;
-      border: 1px solid transparent;
-    }
+        .welcome-title {
+            font-size: 42px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
 
-    .quick-link:hover {
-      background: #667eea;
-      color: white;
-      transform: translateY(-1px);
-      border-color: #667eea;
-    }
+        .welcome-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-weight: 500;
+        }
 
-    .quick-link-icon {
-      font-size: 16px;
-    }
+        .feature-tags {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
 
-    /* 主要内容区域 */
-    .main-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0;
-    }
+        .feature-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+        }
 
-    /* API 文档容器 */
-    .api-doc-wrapper {
-      background: white;
-      border-radius: 0;
-      overflow: hidden;
-    }
+        .feature-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+        }
 
-    /* Redoc 自定义样式 */
-    redoc {
-      display: block;
-    }
+        /* ========== 主容器 ========== */
+        .main-container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 30px 40px 30px;
+        }
 
-    /* 响应式设计 */
-    @media (max-width: 768px) {
-      .header-content {
-        padding: 15px 20px;
-      }
+        .api-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
 
-      .title-section h1 {
-        font-size: 22px;
-      }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-      .title-section p {
-        font-size: 12px;
-      }
+        /* ========== Swagger UI 自定义样式 ========== */
+        .swagger-ui {
+            font-family: 'Inter', sans-serif !important;
+        }
 
-      .header-btn {
-        padding: 8px 16px;
-        font-size: 13px;
-      }
+        /* Swagger UI 顶部栏隐藏 */
+        .swagger-ui .topbar {
+            display: none;
+        }
 
-      .quick-nav-content {
-        padding: 0 20px;
-      }
+        /* 信息区域样式 */
+        .swagger-ui .information-container {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            padding: 40px;
+            border-bottom: 3px solid #667eea;
+            border-radius: 0;
+        }
 
-      .logo {
-        width: 40px;
-        height: 40px;
-        font-size: 20px;
-      }
-    }
+        .swagger-ui .info {
+            margin: 0;
+        }
 
-    /* Loading 动画 */
-    .loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 400px;
-      gap: 20px;
-    }
+        .swagger-ui .info .title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
 
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #667eea;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
+        .swagger-ui .info .description {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #4a5568;
+        }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+        /* 操作区域 */
+        .swagger-ui .opblock-tag {
+            border-bottom: 2px solid #e2e8f0;
+            margin: 0;
+            padding: 20px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
 
-    .loading-text {
-      color: #6c757d;
-      font-size: 16px;
-    }
+        .swagger-ui .opblock-tag:hover {
+            background: #f7fafc;
+        }
 
-    /* 页脚 */
-    .footer {
-      background: #2d3748;
-      color: #cbd5e0;
-      padding: 30px 0;
-      margin-top: 50px;
-      text-align: center;
-    }
+        .swagger-ui .opblock-tag-section {
+            margin: 0;
+        }
 
-    .footer-content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 30px;
-    }
+        .swagger-ui .opblock {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            margin: 20px 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
 
-    .footer p {
-      margin: 8px 0;
-      font-size: 14px;
-    }
+        .swagger-ui .opblock:hover {
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
 
-    .footer a {
-      color: #90cdf4;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
+        /* GET 请求样式 */
+        .swagger-ui .opblock.opblock-get {
+            border-color: #48bb78;
+            background: rgba(72, 187, 120, 0.05);
+        }
 
-    .footer a:hover {
-      color: #63b3ed;
-      text-decoration: underline;
-    }
+        .swagger-ui .opblock.opblock-get .opblock-summary-method {
+            background: #48bb78;
+        }
 
-    /* 通知横幅 */
-    .notice-banner {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 12px 0;
-      text-align: center;
-      font-size: 14px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
+        .swagger-ui .opblock.opblock-get .tab-header .tab-item.active h4 span:after {
+            background: #48bb78;
+        }
 
-    .notice-banner a {
-      color: white;
-      text-decoration: underline;
-      font-weight: 600;
-    }
-  </style>
+        /* POST 请求样式 */
+        .swagger-ui .opblock.opblock-post {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .swagger-ui .opblock.opblock-post .opblock-summary-method {
+            background: #667eea;
+        }
+
+        /* PUT 请求样式 */
+        .swagger-ui .opblock.opblock-put {
+            border-color: #ed8936;
+            background: rgba(237, 137, 54, 0.05);
+        }
+
+        .swagger-ui .opblock.opblock-put .opblock-summary-method {
+            background: #ed8936;
+        }
+
+        /* DELETE 请求样式 */
+        .swagger-ui .opblock.opblock-delete {
+            border-color: #f56565;
+            background: rgba(245, 101, 101, 0.05);
+        }
+
+        .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+            background: #f56565;
+        }
+
+        /* 方法标签 */
+        .swagger-ui .opblock-summary-method {
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        /* 路径 */
+        .swagger-ui .opblock-summary-path {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* 参数表格 */
+        .swagger-ui table {
+            border: none;
+        }
+
+        .swagger-ui table thead tr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .swagger-ui table thead tr th {
+            color: white;
+            font-weight: 600;
+            padding: 15px;
+        }
+
+        .swagger-ui table tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        .swagger-ui table tbody tr:hover {
+            background: #f7fafc;
+        }
+
+        /* 响应区域 */
+        .swagger-ui .responses-wrapper {
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 12px;
+        }
+
+        /* 代码块 */
+        .swagger-ui .highlight-code {
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .swagger-ui .highlight-code > .microlight {
+            background: #1a202c !important;
+            color: #e2e8f0;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* 按钮 */
+        .swagger-ui .btn {
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .swagger-ui .btn.execute {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+        }
+
+        .swagger-ui .btn.execute:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        /* 模型展开 */
+        .swagger-ui .model-box {
+            background: #f7fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            padding: 20px;
+        }
+
+        .swagger-ui .model {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Authorize 按钮 */
+        .swagger-ui .auth-wrapper {
+            padding: 20px 40px;
+        }
+
+        .swagger-ui .btn.authorize {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            border-radius: 8px;
+            padding: 10px 24px;
+            font-weight: 600;
+        }
+
+        .swagger-ui .btn.authorize svg {
+            fill: white;
+        }
+
+        /* ========== 页脚 ========== */
+        .footer {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 40px 30px;
+            text-align: center;
+            margin-top: 60px;
+            border-top: 3px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .footer-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .footer-link:hover:after {
+            width: 100%;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer-text strong {
+            color: var(--primary-color);
+        }
+
+        /* ========== 响应式设计 ========== */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 15px 20px;
+            }
+
+            .logo {
+                width: 48px;
+                height: 48px;
+                font-size: 28px;
+            }
+
+            .brand-info h1 {
+                font-size: 22px;
+            }
+
+            .brand-info p {
+                font-size: 12px;
+            }
+
+            .welcome-banner {
+                padding: 30px 20px;
+            }
+
+            .welcome-title {
+                font-size: 32px;
+            }
+
+            .welcome-subtitle {
+                font-size: 16px;
+            }
+
+            .main-container {
+                padding: 0 20px 30px 20px;
+                margin: 30px auto;
+            }
+
+            .swagger-ui .opblock {
+                margin: 15px 20px;
+            }
+
+            .swagger-ui .opblock-tag {
+                padding: 15px 20px;
+            }
+
+            .nav-btn {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+
+        /* ========== Loading 动画 ========== */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loading-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin-top: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* ========== 滚动条样式 ========== */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
 </head>
-
 <body>
-  <!-- 通知横幅 -->
-  <div class="notice-banner">
-    🎉 欢迎使用 Van Nav Enhanced API！基于原版 v1.12.1 增强，新增子分类系统、智能排序等功能
-  </div>
-
-  <!-- 顶部导航栏 -->
-  <header class="top-header">
-    <div class="header-content">
-      <div class="header-left">
-        <div class="logo-section">
-          <div class="logo">📚</div>
-          <div class="title-section">
-            <h1>Van Nav Enhanced API</h1>
-            <p>增强版导航站 RESTful API 文档 <span class="version-badge">v1.0 Enhanced</span></p>
-          </div>
-        </div>
-      </div>
-      <div class="header-right">
-        <a href="https://github.com/DeerFishSheep/van-nav-enhanced" target="_blank" class="header-btn">
-          <span>⭐</span>
-          <span>GitHub</span>
-        </a>
-        <a href="https://github.com/DeerFishSheep/van-nav-enhanced/releases" target="_blank" class="header-btn primary">
-          <span>📦</span>
-          <span>下载</span>
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- 快速导航 -->
-  <nav class="quick-nav">
-    <div class="quick-nav-content">
-      <a href="#tag/Tools" class="quick-link">
-        <span class="quick-link-icon">🔖</span>
-        <span>书签管理</span>
-      </a>
-      <a href="#tag/Catelog" class="quick-link">
-        <span class="quick-link-icon">📁</span>
-        <span>大分类</span>
-      </a>
-      <a href="#tag/SubCatelog" class="quick-link">
-        <span class="quick-link-icon">📂</span>
-        <span>子分类</span>
-      </a>
-      <a href="#tag/SearchEngine" class="quick-link">
-        <span class="quick-link-icon">🔍</span>
-        <span>搜索引擎</span>
-      </a>
-      <a href="#tag/SiteConfig" class="quick-link">
-        <span class="quick-link-icon">⚙️</span>
-        <span>站点配置</span>
-      </a>
-      <a href="#tag/Auth" class="quick-link">
-        <span class="quick-link-icon">🔐</span>
-        <span>认证</span>
-      </a>
-      <a href="#tag/Image" class="quick-link">
-        <span class="quick-link-icon">🖼️</span>
-        <span>图片</span>
-      </a>
-    </div>
-  </nav>
-
-  <!-- 主要内容 -->
-  <main class="main-container">
-    <div class="api-doc-wrapper">
-      <!-- Loading 状态 -->
-      <div id="loading" class="loading">
+    <!-- Loading 动画 -->
+    <div class="loading-overlay" id="loading">
         <div class="spinner"></div>
         <div class="loading-text">正在加载 API 文档...</div>
-      </div>
-      
-      <!-- Redoc 容器 -->
-      <div id="redoc-container"></div>
     </div>
-  </main>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <div class="footer-content">
-      <p>
-        <strong>Van Nav Enhanced</strong> - 基于 
-        <a href="https://github.com/Mereithhh/van-nav" target="_blank">Van Nav v1.12.1</a> 
-        增强版
-      </p>
-      <p>
-        由 <a href="https://github.com/DeerFishSheep" target="_blank">DeerFishSheep</a> 维护 | 
-        <a href="https://github.com/DeerFishSheep/van-nav-enhanced/issues" target="_blank">反馈问题</a> | 
-        <a href="https://github.com/DeerFishSheep/van-nav-enhanced/blob/main/LICENSE" target="_blank">MIT License</a>
-      </p>
-      <p style="margin-top: 15px; font-size: 13px; opacity: 0.8;">
-        API 文档由 <a href="https://github.com/Redocly/redoc" target="_blank">Redoc</a> 强力驱动
-      </p>
+    <!-- 顶部导航栏 -->
+    <nav class="top-navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <div class="logo-section">
+                    <div class="logo" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">📚</div>
+                    <div class="brand-info">
+                        <h1>Van Nav Enhanced API</h1>
+                        <p>增强版导航站 RESTful API 文档 <span class="version-badge">v1.0 Enhanced</span></p>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-right">
+                <a href="https://github.com/DeerFishSheep/van-nav-enhanced" target="_blank" class="nav-btn">
+                    <span>⭐</span>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://github.com/DeerFishSheep/van-nav-enhanced/releases" target="_blank" class="nav-btn primary">
+                    <span>📦</span>
+                    <span>下载</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 欢迎横幅 -->
+    <div class="welcome-banner">
+        <div class="welcome-content">
+            <h2 class="welcome-title">🚀 功能强大的导航站 API</h2>
+            <p class="welcome-subtitle">
+                基于 Van Nav v1.12.1 增强版本，提供完整的 RESTful API 接口<br>
+                支持子分类系统、智能排序、自动分类创建等强大功能
+            </p>
+            <div class="feature-tags">
+                <span class="feature-tag">✨ 子分类系统</span>
+                <span class="feature-tag">🎯 智能排序</span>
+                <span class="feature-tag">🚀 自动分类</span>
+                <span class="feature-tag">🔐 JWT 认证</span>
+                <span class="feature-tag">📚 完整文档</span>
+            </div>
+        </div>
     </div>
-  </footer>
 
-  <!-- Redoc Script -->
-  <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.js"></script>
-  
-  <!-- 初始化脚本 -->
-  <script>
-    // 隐藏 loading，显示文档
-    function hideLoading() {
-      document.getElementById('loading').style.display = 'none';
-    }
+    <!-- 主容器 -->
+    <div class="main-container">
+        <div class="api-container">
+            <div id="swagger-ui"></div>
+        </div>
+    </div>
 
-    // Redoc 配置选项
-    const redocOptions = {
-      // 主题配置
-      theme: {
-        colors: {
-          primary: {
-            main: '#667eea'
-          },
-          success: {
-            main: '#48bb78'
-          },
-          warning: {
-            main: '#ed8936'
-          },
-          error: {
-            main: '#f56565'
-          },
-          text: {
-            primary: '#2d3748',
-            secondary: '#4a5568'
-          },
-          border: {
-            dark: '#cbd5e0',
-            light: '#e2e8f0'
-          }
-        },
-        typography: {
-          fontSize: '15px',
-          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          headings: {
-            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            fontWeight: '600'
-          },
-          code: {
-            fontSize: '14px',
-            fontFamily: "'JetBrains Mono', 'Monaco', 'Courier New', monospace",
-            backgroundColor: '#f7fafc',
-            color: '#e53e3e',
-            wrap: true
-          }
-        },
-        sidebar: {
-          width: '280px',
-          backgroundColor: '#ffffff',
-          textColor: '#2d3748',
-          activeTextColor: '#667eea',
-          groupItems: {
-            activeBackgroundColor: '#f7fafc',
-            activeTextColor: '#667eea',
-            textTransform: 'none'
-          },
-          level1Items: {
-            activeBackgroundColor: '#edf2f7',
-            activeTextColor: '#667eea',
-            textTransform: 'uppercase'
-          }
-        },
-        rightPanel: {
-          backgroundColor: '#2d3748',
-          width: '40%',
-          textColor: '#ffffff'
-        },
-        codeBlock: {
-          backgroundColor: '#1a202c'
-        }
-      },
-      
-      // 功能配置
-      scrollYOffset: 80, // 顶部导航栏高度
-      hideDownloadButton: false, // 显示下载按钮
-      disableSearch: false, // 启用搜索
-      expandResponses: '200,201', // 默认展开成功响应
-      jsonSampleExpandLevel: 2, // JSON 示例展开层级
-      hideSingleRequestSampleTab: true, // 隐藏单个请求示例标签
-      menuToggle: true, // 启用菜单折叠
-      nativeScrollbars: false, // 使用自定义滚动条
-      pathInMiddlePanel: true, // 在中间面板显示路径
-      requiredPropsFirst: true, // 必填参数优先显示
-      sortPropsAlphabetically: false, // 不按字母排序（保持定义顺序）
-      expandDefaultServerVariables: true, // 展开默认服务器变量
-      maxDisplayedEnumValues: 10, // 最多显示的枚举值数量
-      
-      // 隐藏 Logo
-      hideLoading: true,
-      
-      // 自定义翻译
-      labels: {
-        searchPlaceholder: '搜索 API 接口...',
-        deprecated: '已废弃',
-        required: '必填',
-        requestSamples: '请求示例',
-        responses: '响应',
-        requestBody: '请求体',
-        parameters: '参数',
-        headers: '请求头',
-        download: '下载 OpenAPI 规范'
-      }
-    };
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="https://github.com/DeerFishSheep/van-nav-enhanced" target="_blank" class="footer-link">GitHub 仓库</a>
+                <a href="https://github.com/DeerFishSheep/van-nav-enhanced/issues" target="_blank" class="footer-link">问题反馈</a>
+                <a href="https://github.com/DeerFishSheep/van-nav-enhanced/blob/main/README.md" target="_blank" class="footer-link">使用文档</a>
+                <a href="https://github.com/Mereithhh/van-nav" target="_blank" class="footer-link">原项目</a>
+            </div>
+            <div class="footer-text">
+                <p><strong>Van Nav Enhanced</strong> - 基于 <a href="https://github.com/Mereithhh/van-nav" target="_blank" style="color: #667eea;">Van Nav v1.12.1</a> 的增强版本</p>
+                <p>由 <a href="https://github.com/DeerFishSheep" target="_blank" style="color: #667eea;">DeerFishSheep</a> 维护 | <a href="https://github.com/DeerFishSheep/van-nav-enhanced/blob/main/LICENSE" target="_blank" style="color: #667eea;">MIT License</a></p>
+                <p style="margin-top: 15px; font-size: 13px; opacity: 0.8;">API 文档由 <a href="https://swagger.io/" target="_blank" style="color: #667eea;">Swagger UI</a> 强力驱动</p>
+            </div>
+        </div>
+    </footer>
 
-    // 初始化 Redoc
-    Redoc.init(
-      './openapi.yaml',
-      redocOptions,
-      document.getElementById('redoc-container'),
-      function(errors, spec) {
-        hideLoading();
-        
-        if (errors) {
-          console.error('Redoc 初始化错误:', errors);
-          document.getElementById('redoc-container').innerHTML = 
-            '<div style="padding: 40px; text-align: center; color: #e53e3e;">' +
-            '<h2>⚠️ 加载失败</h2>' +
-            '<p>无法加载 API 文档，请刷新页面重试或联系管理员。</p>' +
-            '</div>';
-        } else {
-          console.log('Redoc 初始化成功');
-        }
-      }
-    );
+    <!-- Swagger UI JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.5/swagger-ui-bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5.10.5/swagger-ui-standalone-preset.js"></script>
 
-    // 平滑滚动
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
+    <!-- 初始化脚本 -->
+    <script>
+        window.onload = function() {
+            // 初始化 Swagger UI
+            const ui = SwaggerUIBundle({
+                url: "./openapi.yaml",
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                
+                // 自定义配置
+                displayRequestDuration: true,
+                docExpansion: "list",
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true,
+                defaultModelsExpandDepth: 3,
+                defaultModelExpandDepth: 3,
+                tryItOutEnabled: true,
+                requestSnippetsEnabled: true,
+                syntaxHighlight: {
+                    activate: true,
+                    theme: "monokai"
+                },
+                
+                // 隐藏顶部栏
+                deepLinking: true,
+                displayOperationId: false,
+                defaultModelRendering: "model",
+                displayRequestDuration: true,
+                filter: true,
+                showExtensions: true,
+                showCommonExtensions: true,
+                
+                // 在加载完成后的回调
+                onComplete: function() {
+                    // 隐藏 loading 动画
+                    setTimeout(() => {
+                        document.getElementById('loading').classList.add('hidden');
+                    }, 500);
+                    
+                    console.log('🚀 Swagger UI 加载完成');
+                },
+                
+                // 错误处理
+                onFailure: function(error) {
+                    console.error('❌ Swagger UI 加载失败:', error);
+                    document.getElementById('loading').innerHTML = `
+                        <div style="text-align: center; color: white;">
+                            <h2 style="margin-bottom: 15px;">⚠️ 加载失败</h2>
+                            <p>无法加载 API 文档，请刷新页面重试</p>
+                            <button onclick="location.reload()" style="
+                                margin-top: 20px;
+                                padding: 12px 30px;
+                                background: white;
+                                color: #667eea;
+                                border: none;
+                                border-radius: 8px;
+                                font-size: 16px;
+                                font-weight: 600;
+                                cursor: pointer;
+                            ">刷新页面</button>
+                        </div>
+                    `;
+                }
+            });
 
-    // 添加键盘快捷键
-    document.addEventListener('keydown', function(e) {
-      // Ctrl/Cmd + K 聚焦搜索
-      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-        e.preventDefault();
-        const searchInput = document.querySelector('[role="search"] input');
-        if (searchInput) {
-          searchInput.focus();
-        }
-      }
-    });
-  </script>
+            window.ui = ui;
+        };
+
+        // 平滑滚动
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+
+        // 添加页面加载动画
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 0.5s ease';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
 </body>
-
 </html>
