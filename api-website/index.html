@@ -1,22 +1,588 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 
 <head>
-  <title>API 文档</title>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+  <meta name="description" content="Van Nav Enhanced - 增强版导航站 API 文档，支持子分类、智能排序等功能">
+  <meta name="keywords" content="Van Nav, API, 导航站, 书签管理, RESTful API">
+  
+  <title>Van Nav Enhanced API 文档 - 增强版导航站</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://github.githubassets.com/favicons/favicon.png">
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
   <style>
+    /* 全局样式 */
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      background: #f8f9fa;
+      overflow-x: hidden;
+    }
+
+    /* 顶部导航栏 */
+    .top-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 3px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #667eea;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease;
+    }
+
+    .logo:hover {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .title-section h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .title-section p {
+      margin: 5px 0 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+      font-weight: 400;
+    }
+
+    .version-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .header-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .header-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .header-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .header-btn.primary {
+      background: white;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    .header-btn.primary:hover {
+      background: #f8f9fa;
+      box-shadow: 0 4px 20px rgba(255, 255, 255, 0.3);
+    }
+
+    /* 快速导航栏 */
+    .quick-nav {
+      background: white;
+      border-bottom: 1px solid #e9ecef;
+      padding: 15px 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .quick-nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 30px;
+      display: flex;
+      gap: 15px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .quick-nav-content::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .quick-nav-content::-webkit-scrollbar-thumb {
+      background: #dee2e6;
+      border-radius: 2px;
+    }
+
+    .quick-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: #f8f9fa;
+      color: #495057;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .quick-link:hover {
+      background: #667eea;
+      color: white;
+      transform: translateY(-1px);
+      border-color: #667eea;
+    }
+
+    .quick-link-icon {
+      font-size: 16px;
+    }
+
+    /* 主要内容区域 */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    /* API 文档容器 */
+    .api-doc-wrapper {
+      background: white;
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    /* Redoc 自定义样式 */
+    redoc {
+      display: block;
+    }
+
+    /* 响应式设计 */
+    @media (max-width: 768px) {
+      .header-content {
+        padding: 15px 20px;
+      }
+
+      .title-section h1 {
+        font-size: 22px;
+      }
+
+      .title-section p {
+        font-size: 12px;
+      }
+
+      .header-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .quick-nav-content {
+        padding: 0 20px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+      }
+    }
+
+    /* Loading 动画 */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      gap: 20px;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: #6c757d;
+      font-size: 16px;
+    }
+
+    /* 页脚 */
+    .footer {
+      background: #2d3748;
+      color: #cbd5e0;
+      padding: 30px 0;
+      margin-top: 50px;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 30px;
+    }
+
+    .footer p {
+      margin: 8px 0;
+      font-size: 14px;
+    }
+
+    .footer a {
+      color: #90cdf4;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer a:hover {
+      color: #63b3ed;
+      text-decoration: underline;
+    }
+
+    /* 通知横幅 */
+    .notice-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 12px 0;
+      text-align: center;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .notice-banner a {
+      color: white;
+      text-decoration: underline;
+      font-weight: 600;
     }
   </style>
 </head>
 
 <body>
-  <redoc spec-url='./openapi.yaml'></redoc>
-  <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+  <!-- 通知横幅 -->
+  <div class="notice-banner">
+    🎉 欢迎使用 Van Nav Enhanced API！基于原版 v1.12.1 增强，新增子分类系统、智能排序等功能
+  </div>
+
+  <!-- 顶部导航栏 -->
+  <header class="top-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="logo-section">
+          <div class="logo">📚</div>
+          <div class="title-section">
+            <h1>Van Nav Enhanced API</h1>
+            <p>增强版导航站 RESTful API 文档 <span class="version-badge">v1.0 Enhanced</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="header-right">
+        <a href="https://github.com/DeerFishSheep/van-nav-enhanced" target="_blank" class="header-btn">
+          <span>⭐</span>
+          <span>GitHub</span>
+        </a>
+        <a href="https://github.com/DeerFishSheep/van-nav-enhanced/releases" target="_blank" class="header-btn primary">
+          <span>📦</span>
+          <span>下载</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 快速导航 -->
+  <nav class="quick-nav">
+    <div class="quick-nav-content">
+      <a href="#tag/Tools" class="quick-link">
+        <span class="quick-link-icon">🔖</span>
+        <span>书签管理</span>
+      </a>
+      <a href="#tag/Catelog" class="quick-link">
+        <span class="quick-link-icon">📁</span>
+        <span>大分类</span>
+      </a>
+      <a href="#tag/SubCatelog" class="quick-link">
+        <span class="quick-link-icon">📂</span>
+        <span>子分类</span>
+      </a>
+      <a href="#tag/SearchEngine" class="quick-link">
+        <span class="quick-link-icon">🔍</span>
+        <span>搜索引擎</span>
+      </a>
+      <a href="#tag/SiteConfig" class="quick-link">
+        <span class="quick-link-icon">⚙️</span>
+        <span>站点配置</span>
+      </a>
+      <a href="#tag/Auth" class="quick-link">
+        <span class="quick-link-icon">🔐</span>
+        <span>认证</span>
+      </a>
+      <a href="#tag/Image" class="quick-link">
+        <span class="quick-link-icon">🖼️</span>
+        <span>图片</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- 主要内容 -->
+  <main class="main-container">
+    <div class="api-doc-wrapper">
+      <!-- Loading 状态 -->
+      <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <div class="loading-text">正在加载 API 文档...</div>
+      </div>
+      
+      <!-- Redoc 容器 -->
+      <div id="redoc-container"></div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="footer-content">
+      <p>
+        <strong>Van Nav Enhanced</strong> - 基于 
+        <a href="https://github.com/Mereithhh/van-nav" target="_blank">Van Nav v1.12.1</a> 
+        增强版
+      </p>
+      <p>
+        由 <a href="https://github.com/DeerFishSheep" target="_blank">DeerFishSheep</a> 维护 | 
+        <a href="https://github.com/DeerFishSheep/van-nav-enhanced/issues" target="_blank">反馈问题</a> | 
+        <a href="https://github.com/DeerFishSheep/van-nav-enhanced/blob/main/LICENSE" target="_blank">MIT License</a>
+      </p>
+      <p style="margin-top: 15px; font-size: 13px; opacity: 0.8;">
+        API 文档由 <a href="https://github.com/Redocly/redoc" target="_blank">Redoc</a> 强力驱动
+      </p>
+    </div>
+  </footer>
+
+  <!-- Redoc Script -->
+  <script src="https://cdn.jsdelivr.net/npm/redoc@2.1.3/bundles/redoc.standalone.js"></script>
+  
+  <!-- 初始化脚本 -->
+  <script>
+    // 隐藏 loading，显示文档
+    function hideLoading() {
+      document.getElementById('loading').style.display = 'none';
+    }
+
+    // Redoc 配置选项
+    const redocOptions = {
+      // 主题配置
+      theme: {
+        colors: {
+          primary: {
+            main: '#667eea'
+          },
+          success: {
+            main: '#48bb78'
+          },
+          warning: {
+            main: '#ed8936'
+          },
+          error: {
+            main: '#f56565'
+          },
+          text: {
+            primary: '#2d3748',
+            secondary: '#4a5568'
+          },
+          border: {
+            dark: '#cbd5e0',
+            light: '#e2e8f0'
+          }
+        },
+        typography: {
+          fontSize: '15px',
+          fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          headings: {
+            fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontWeight: '600'
+          },
+          code: {
+            fontSize: '14px',
+            fontFamily: "'JetBrains Mono', 'Monaco', 'Courier New', monospace",
+            backgroundColor: '#f7fafc',
+            color: '#e53e3e',
+            wrap: true
+          }
+        },
+        sidebar: {
+          width: '280px',
+          backgroundColor: '#ffffff',
+          textColor: '#2d3748',
+          activeTextColor: '#667eea',
+          groupItems: {
+            activeBackgroundColor: '#f7fafc',
+            activeTextColor: '#667eea',
+            textTransform: 'none'
+          },
+          level1Items: {
+            activeBackgroundColor: '#edf2f7',
+            activeTextColor: '#667eea',
+            textTransform: 'uppercase'
+          }
+        },
+        rightPanel: {
+          backgroundColor: '#2d3748',
+          width: '40%',
+          textColor: '#ffffff'
+        },
+        codeBlock: {
+          backgroundColor: '#1a202c'
+        }
+      },
+      
+      // 功能配置
+      scrollYOffset: 80, // 顶部导航栏高度
+      hideDownloadButton: false, // 显示下载按钮
+      disableSearch: false, // 启用搜索
+      expandResponses: '200,201', // 默认展开成功响应
+      jsonSampleExpandLevel: 2, // JSON 示例展开层级
+      hideSingleRequestSampleTab: true, // 隐藏单个请求示例标签
+      menuToggle: true, // 启用菜单折叠
+      nativeScrollbars: false, // 使用自定义滚动条
+      pathInMiddlePanel: true, // 在中间面板显示路径
+      requiredPropsFirst: true, // 必填参数优先显示
+      sortPropsAlphabetically: false, // 不按字母排序（保持定义顺序）
+      expandDefaultServerVariables: true, // 展开默认服务器变量
+      maxDisplayedEnumValues: 10, // 最多显示的枚举值数量
+      
+      // 隐藏 Logo
+      hideLoading: true,
+      
+      // 自定义翻译
+      labels: {
+        searchPlaceholder: '搜索 API 接口...',
+        deprecated: '已废弃',
+        required: '必填',
+        requestSamples: '请求示例',
+        responses: '响应',
+        requestBody: '请求体',
+        parameters: '参数',
+        headers: '请求头',
+        download: '下载 OpenAPI 规范'
+      }
+    };
+
+    // 初始化 Redoc
+    Redoc.init(
+      './openapi.yaml',
+      redocOptions,
+      document.getElementById('redoc-container'),
+      function(errors, spec) {
+        hideLoading();
+        
+        if (errors) {
+          console.error('Redoc 初始化错误:', errors);
+          document.getElementById('redoc-container').innerHTML = 
+            '<div style="padding: 40px; text-align: center; color: #e53e3e;">' +
+            '<h2>⚠️ 加载失败</h2>' +
+            '<p>无法加载 API 文档，请刷新页面重试或联系管理员。</p>' +
+            '</div>';
+        } else {
+          console.log('Redoc 初始化成功');
+        }
+      }
+    );
+
+    // 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // 添加键盘快捷键
+    document.addEventListener('keydown', function(e) {
+      // Ctrl/Cmd + K 聚焦搜索
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.querySelector('[role="search"] input');
+        if (searchInput) {
+          searchInput.focus();
+        }
+      }
+    });
+  </script>
 </body>
 
 </html>
