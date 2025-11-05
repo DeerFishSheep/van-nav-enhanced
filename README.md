@@ -141,7 +141,8 @@ curl -X POST http://localhost:6412/api/admin/tool \
 
 3. **运行一键部署脚本**
    ```bash
-   sudo ./van-nav-service.sh
+   chmod +x van-nav
+   ./van-nav-service.sh
    ```
 
 脚本会自动：
