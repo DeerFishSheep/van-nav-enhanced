@@ -70,11 +70,13 @@ type SearchEngine struct {
 	Logo        string `json:"logo"`
 	Sort        int    `json:"sort"`
 	Enabled     bool   `json:"enabled"`
+	IsDefault   bool   `json:"isDefault"`
 }
 
 // 网站配置模型
 type SiteConfig struct {
-	Id          int  `json:"id"`
-	NoImageMode bool `json:"noImageMode"`
-	CompactMode bool `json:"compactMode"`
+	Id              int  `json:"id"`
+	NoImageMode     bool `json:"noImageMode"`
+	CompactMode     bool `json:"compactMode"`
+	HideCategoryTag bool `json:"hideCategoryTag"`
 }

@@ -428,11 +428,14 @@ func AddCatelogHandler(c *gin.Context) {
 		})
 		return
 	}
-	service.AddCatelog(data)
+	id := service.AddCatelog(data)
 
 	c.JSON(200, gin.H{
 		"success": true,
 		"message": "增加分类成功",
+		"data": gin.H{
+			"id": id,
+		},
 	})
 }
 
@@ -749,6 +752,33 @@ func UpdateSearchEngineSortHandler(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"success": true,
 		"message": "更新排序成功",
+	})
+}
+
+// 设置默认搜索引擎
+func SetDefaultSearchEngineHandler(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"success":      false,
+			"errorMessage": "无效的ID",
+		})
+		return
+	}
+	
+	err = database.SetDefaultSearchEngine(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success":      false,
+			"errorMessage": err.Error(),
+		})
+		return
+	}
+	
+	c.JSON(200, gin.H{
+		"success": true,
+		"message": "设置默认搜索引擎成功",
 	})
 }
 

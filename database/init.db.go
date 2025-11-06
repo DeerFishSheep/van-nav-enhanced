@@ -179,18 +179,26 @@ func InitDB() {
 			queryParam TEXT NOT NULL,
 			logo TEXT,
 			sort INTEGER NOT NULL DEFAULT 0,
-			enabled BOOLEAN NOT NULL DEFAULT 1
+			enabled BOOLEAN NOT NULL DEFAULT 1,
+			isDefault BOOLEAN NOT NULL DEFAULT 0
 		);
 		`
 	_, err = DB.Exec(sql_create_table)
 	utils.CheckErr(err)
+	
+	// 搜索引擎表结构升级 - 添加isDefault列
+	if !columnExists("nav_search_engine", "isDefault") {
+		DB.Exec(`ALTER TABLE nav_search_engine ADD COLUMN isDefault BOOLEAN NOT NULL DEFAULT 0;`)
+		logger.LogInfo("已为搜索引擎表添加isDefault字段")
+	}
 
 	// 网站配置表
 	sql_create_table = `
 		CREATE TABLE IF NOT EXISTS nav_site_config (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			noImageMode BOOLEAN NOT NULL DEFAULT 0,
-			compactMode BOOLEAN NOT NULL DEFAULT 0
+			compactMode BOOLEAN NOT NULL DEFAULT 0,
+			hideCategoryTag BOOLEAN NOT NULL DEFAULT 0
 		);
 		`
 	_, err = DB.Exec(sql_create_table)
@@ -199,6 +207,11 @@ func InitDB() {
 	// 网站配置表结构升级 - 添加compactMode列
 	if !columnExists("nav_site_config", "compactMode") {
 		DB.Exec(`ALTER TABLE nav_site_config ADD COLUMN compactMode BOOLEAN NOT NULL DEFAULT 0;`)
+	}
+	
+	// 网站配置表结构升级 - 添加hideCategoryTag列
+	if !columnExists("nav_site_config", "hideCategoryTag") {
+		DB.Exec(`ALTER TABLE nav_site_config ADD COLUMN hideCategoryTag BOOLEAN NOT NULL DEFAULT 0;`)
 	}
 	
 	// 如果不存在，就初始化默认搜索引擎
@@ -284,12 +297,12 @@ func InitDB() {
 	utils.CheckErr(err)
 	if !rows.Next() {
 		sql_add_site_config := `
-			INSERT INTO nav_site_config (noImageMode, compactMode)
-			VALUES (?, ?);
+			INSERT INTO nav_site_config (noImageMode, compactMode, hideCategoryTag)
+			VALUES (?, ?, ?);
 			`
 		stmt, err := DB.Prepare(sql_add_site_config)
 		utils.CheckErr(err)
-		res, err := stmt.Exec(false, false)
+		res, err := stmt.Exec(false, false, false)
 		utils.CheckErr(err)
 		_, err = res.LastInsertId()
 		utils.CheckErr(err)

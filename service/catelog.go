@@ -93,10 +93,10 @@ func UpdateCatelog(data types.UpdateCatelogDto) {
 	logger.LogInfo("更新大分类成功: %s (ID: %d, Sort: %d)", data.Name, data.Id, targetSort)
 }
 
-func AddCatelog(data types.AddCatelogDto) {
+func AddCatelog(data types.AddCatelogDto) int64 {
 	// 检查分类名称是否为空，如果为空则不创建
 	if data.Name == "" || strings.TrimSpace(data.Name) == "" {
-		return
+		return 0
 	}
 	
 	// 先检查重复不重复
@@ -106,7 +106,7 @@ func AddCatelog(data types.AddCatelogDto) {
 		existCatelogsArr = append(existCatelogsArr, catelogDto.Name)
 	}
 	if utils.In(data.Name, existCatelogsArr) {
-		return
+		return 0
 	}
 	
 	// 获取当前大分类总数
@@ -164,6 +164,7 @@ func AddCatelog(data types.AddCatelogDto) {
 	utils.CheckErr(err)
 	
 	logger.LogInfo("添加大分类成功: %s (ID: %d, Sort: %d)", data.Name, id, targetSort)
+	return id
 }
 
 func GetAllCatelog() []types.Catelog {

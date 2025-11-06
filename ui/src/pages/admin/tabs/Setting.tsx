@@ -185,6 +185,9 @@ export const Setting: React.FC<SettingProps> = (props) => {
             <Form.Item label="精简模式" name="compactMode" tooltip="开启后卡片只显示标题和logo，如果同时开启无图模式则只显示标题">
               <Switch defaultChecked={Boolean(store?.siteConfig?.compactMode)} />
             </Form.Item>
+            <Form.Item label="隐藏分类标签" name="hideCategoryTag" tooltip="开启后书签卡片将不显示分类标签">
+              <Switch defaultChecked={Boolean(store?.siteConfig?.hideCategoryTag)} />
+            </Form.Item>
             <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
               <Button type="primary" htmlType="submit">
                 提交

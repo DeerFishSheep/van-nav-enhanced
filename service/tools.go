@@ -61,9 +61,9 @@ func ImportTools(data []types.Tool) {
 	var finalSubCatelogId int
 	subCatelogName := v.SubCatelog
 	
-	// 如果没有指定子分类或为空，使用"默认"
+	// 如果没有指定子分类或为空，使用"未归类"
 	if subCatelogName == "" || strings.TrimSpace(subCatelogName) == "" {
-		subCatelogName = "默认"
+		subCatelogName = "未归类"
 	}
 	
 	// 查找或创建子分类
@@ -184,7 +184,7 @@ func UpdateTool(data types.UpdateToolDto) {
 	// 2. 处理子分类：查找或创建
 	subCatelogName := data.SubCatelog
 	if subCatelogName == "" || strings.TrimSpace(subCatelogName) == "" {
-		subCatelogName = "默认"
+		subCatelogName = "未归类"
 	}
 	
 	var subCatelogId int
@@ -290,7 +290,7 @@ func AddTool(data types.AddToolDto) (int64, error) {
 	// 2. 处理子分类：查找或创建
 	subCatelogName := data.SubCatelog
 	if subCatelogName == "" || strings.TrimSpace(subCatelogName) == "" {
-		subCatelogName = "默认"
+		subCatelogName = "未归类"
 	}
 	
 	var subCatelogId int

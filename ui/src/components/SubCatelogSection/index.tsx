@@ -11,6 +11,7 @@ interface SubCatelogSectionProps {
   searchString: string;
   noImageMode: boolean;
   compactMode: boolean;
+  hideCategoryTag: boolean;
   onCardClick: () => void;
   onToolClick?: (url: string) => void;
 }
@@ -21,6 +22,7 @@ const SubCatelogSection: React.FC<SubCatelogSectionProps> = ({
   searchString,
   noImageMode,
   compactMode,
+  hideCategoryTag,
   onCardClick,
   onToolClick,
 }) => {
@@ -60,6 +62,7 @@ const SubCatelogSection: React.FC<SubCatelogSectionProps> = ({
               isSearching={searchString.trim() !== ""}
               noImageMode={noImageMode}
               compactMode={compactMode}
+              hideCategoryTag={hideCategoryTag}
               onClick={() => {
                 onCardClick();
                 if (onToolClick && item.url) {

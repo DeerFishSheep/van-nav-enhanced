@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 - 导航页面子分类标签展示，可折叠/展开
 - 后台管理支持子分类的增删改查
 - 书签可以归属到具体的子分类下
-- 无子分类的书签自动分配到"默认"子分类
+- 无子分类的书签自动分配到"未归类"子分类
 
 #### 智能排序系统
 - 基于 `COUNT(*)` 的智能序号验证（不依赖历史数据）
@@ -84,7 +84,7 @@ All notable changes to this project will be documented in this file.
 - API 使用 `subCatelog`（字符串）接收子分类名称
 - 同时返回 `subCatelogId`（数字）用于兼容
 - 自动创建不存在的分类/子分类
-- 空子分类自动分配到"默认"子分类
+- 空子分类自动分配到"未归类"子分类
 - 向后兼容原有的 `subCatelogId` 字段
 
 #### API 文档优化

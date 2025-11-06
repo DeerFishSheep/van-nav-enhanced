@@ -116,6 +116,7 @@ func main() {
 			admin.PUT("/searchEngine/:id", handler.UpdateSearchEngineHandler)
 			admin.DELETE("/searchEngine/:id", handler.DeleteSearchEngineHandler)
 			admin.PUT("/searchEngines/sort", handler.UpdateSearchEngineSortHandler)
+			admin.PUT("/searchEngine/:id/default", handler.SetDefaultSearchEngineHandler)
 			
 			// 子分类管理路由
 			admin.GET("/subcatelog", handler.GetAllSubCatelogsHandler)

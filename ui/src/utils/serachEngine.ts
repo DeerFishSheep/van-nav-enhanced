@@ -94,3 +94,9 @@ export const clearSearchEngineCache = () => {
   searchEnginesCache = [];
   cacheExpiry = 0;
 };
+
+// 获取默认搜索引擎
+export const getDefaultSearchEngine = async () => {
+  const engines = await getEnabledSearchEngines();
+  return engines.find(engine => engine.isDefault) || engines[0];
+};

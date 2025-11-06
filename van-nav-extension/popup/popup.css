@@ -1,0 +1,234 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  width: 360px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.container {
+  padding: 12px 16px;
+}
+
+/* 图标区域 */
+.icon-section {
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.icon-preview {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 10px;
+  border: 2px dashed #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+}
+
+.icon-preview img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 6px;
+}
+
+.placeholder {
+  font-size: 32px;
+  color: #999;
+}
+
+.loading {
+  color: #666;
+}
+
+.icon-actions {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.icon-actions button {
+  padding: 6px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s;
+}
+
+.icon-actions button:hover {
+  background: #f0f0f0;
+  border-color: #999;
+}
+
+.icon-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 表单样式 */
+.form-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  min-width: 60px;
+  width: 60px;
+  text-align: right;
+  padding-top: 8px;
+  margin-bottom: 0;
+  font-weight: 500;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+
+/* 选择框+按钮容器 */
+.select-with-button {
+  display: flex;
+  flex: 1;
+  gap: 8px;
+}
+
+.select-with-button select {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.select-with-button select:focus {
+  outline: none;
+  border-color: #4285f4;
+}
+
+.select-with-button select:disabled {
+  background: #f5f5f5;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.btn-add {
+  padding: 8px 16px;
+  border: 1px solid #4285f4;
+  border-radius: 4px;
+  background: white;
+  color: #4285f4;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-add:hover:not(:disabled) {
+  background: #4285f4;
+  color: white;
+}
+
+.btn-add:disabled {
+  border-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+  min-height: 60px;
+}
+
+/* 按钮样式 */
+.form-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-primary,
+.btn-secondary {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  background: #4285f4;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #3367d6;
+}
+
+.btn-secondary {
+  background: #f1f3f4;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #e8eaed;
+}
+
+/* 状态提示 */
+.status {
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-size: 13px;
+  display: none;
+}
+
+.status.success {
+  background: #d4edda;
+  color: #155724;
+  display: block;
+}
+
+.status.error {
+  background: #f8d7da;
+  color: #721c24;
+  display: block;
+}
+
+.status.loading {
+  background: #d1ecf1;
+  color: #0c5460;
+  display: block;
+}
+

@@ -306,7 +306,7 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
           <Form.Item
             name="sort"
             required
-            initialValue={1}
+            initialValue={0}
             label={
               <span>
                 <Tooltip title="升序，按数字从小到大排序">
@@ -318,9 +318,9 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
             labelCol={{ span: 4 }}
           >
             <InputNumber
-              placeholder="请输入分类排序"
+              placeholder="默认排在最后，可手动指定"
               type="number"
-              defaultValue={1}
+              defaultValue={0}
               style={{ width: '100%' }}
             />
           </Form.Item>
@@ -417,7 +417,7 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
           <Form.Item
             name="sort"
             required
-            initialValue={1}
+            initialValue={0}
             label={
               <span>
                 <Tooltip title="升序，按数字从小到大排序">
@@ -429,9 +429,9 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
             labelCol={{ span: 4 }}
           >
             <InputNumber
-              placeholder="请输入子分类排序"
+              placeholder="默认排在最后，可手动指定"
               type="number"
-              defaultValue={1}
+              defaultValue={0}
               style={{ width: '100%' }}
             />
           </Form.Item>

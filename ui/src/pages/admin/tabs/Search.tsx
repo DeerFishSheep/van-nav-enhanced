@@ -21,6 +21,7 @@ import {
   fetchUpdateSearchEngine,
   fetchDeleteSearchEngine,
   fetchUpdateSearchEnginesSort,
+  fetchSetDefaultSearchEngine,
 } from '../../../utils/api';
 
 interface SearchEngine {
@@ -31,6 +32,7 @@ interface SearchEngine {
   logo: string;
   sort: number;
   enabled: boolean;
+  isDefault: boolean;
 }
 
 const DraggableRow = ({ children, ...props }: any) => {
@@ -152,6 +154,24 @@ const SearchEngineManager: React.FC = () => {
       ),
     },
     {
+      title: '默认引擎',
+      dataIndex: 'isDefault',
+      width: 120,
+      render: (isDefault: boolean, record: SearchEngine) => (
+        isDefault ? (
+          <span style={{ color: '#52c41a', fontWeight: 'bold' }}>✓ 默认</span>
+        ) : (
+          <Button
+            size="small"
+            type="link"
+            onClick={() => handleSetDefault(record.id)}
+          >
+            设为默认
+          </Button>
+        )
+      ),
+    },
+    {
       title: '操作',
       width: 120,
       render: (_: any, record: SearchEngine) => (
@@ -179,6 +199,17 @@ const SearchEngineManager: React.FC = () => {
       loadEngines();
     } catch (error) {
       message.error('更新失败');
+      console.error(error);
+    }
+  };
+
+  const handleSetDefault = async (id: number) => {
+    try {
+      await fetchSetDefaultSearchEngine(id);
+      message.success('设置默认搜索引擎成功');
+      loadEngines();
+    } catch (error) {
+      message.error('设置失败');
       console.error(error);
     }
   };

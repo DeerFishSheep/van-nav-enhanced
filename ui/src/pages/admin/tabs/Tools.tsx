@@ -1005,7 +1005,7 @@ export const Tools: React.FC<ToolsProps> = (props) => {
               initialValue={0}
               labelCol={{ span: 6 }}
             >
-              <InputNumber min={0} style={{ width: '100%' }} placeholder="默认为0" />
+              <InputNumber min={0} style={{ width: '100%' }} placeholder="默认排在最后，可手动指定" />
             </Form.Item>
             <Form.Item
               name="hide"
@@ -1064,7 +1064,7 @@ export const Tools: React.FC<ToolsProps> = (props) => {
               initialValue={0}
               labelCol={{ span: 6 }}
             >
-              <InputNumber min={0} style={{ width: '100%' }} placeholder="默认为0" />
+              <InputNumber min={0} style={{ width: '100%' }} placeholder="默认排在最后，可手动指定" />
             </Form.Item>
             <Form.Item
               name="hide"

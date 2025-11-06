@@ -11,9 +11,9 @@ import GithubLink from "../GithubLink";
 import DarkSwitch from "../DarkSwitch";
 import AdminButton from "../AdminButton";
 import { isLogin } from "../../utils/check";
-import { generateSearchEngineCard } from "../../utils/serachEngine";
+import { generateSearchEngineCard, getDefaultSearchEngine } from "../../utils/serachEngine";
 import { toggleJumpTarget } from "../../utils/setting";
-import SubCatelogSection from "../SubCatelogSection";
+import SubCatelogSelector from "../SubCatelogSelector";
 
 const mutiSearch = (s, t) => {
   const source = (s as string).toLowerCase();
@@ -30,6 +30,7 @@ const Content = (props: any) => {
   const [searchString, setSearchString] = useState("");
   const [val, setVal] = useState("");
   const [searchEngineCards, setSearchEngineCards] = useState<any[]>([]);
+  const [currentSubCatelogId, setCurrentSubCatelogId] = useState<number | null>(null);
 
   const filteredDataRef = useRef<any>([]);
 
@@ -41,6 +42,10 @@ const Content = (props: any) => {
   const showAdmin = useMemo(() => {
     const hide = data?.setting?.hideAdmin === true
     return !hide;
+  }, [data])
+  
+  const hideCategoryTag = useMemo(() => {
+    return data?.siteConfig?.hideCategoryTag === true;
   }, [data])
   
   const loadData = useCallback(async () => {
@@ -82,6 +87,7 @@ const Content = (props: any) => {
 
   const handleSetCurrTag = (tag: string) => {
     setCurrTag(tag);
+    setCurrentSubCatelogId(null); // 切换大分类时重置子分类选择
     // 管理后台不记录了
     if (tag !== "管理后台") {
       window.localStorage.setItem("tag", tag);
@@ -92,6 +98,7 @@ const Content = (props: any) => {
   const resetSearch = (notSetTag?: boolean) => {
     setVal("");
     setSearchString("");
+    setCurrentSubCatelogId(null); // 重置子分类选择
     const tagInLocalStorage = window.localStorage.getItem("tag");
     if (!notSetTag && tagInLocalStorage && tagInLocalStorage !== "" && tagInLocalStorage !== "管理后台") {
       setCurrTag(tagInLocalStorage);
@@ -125,12 +132,19 @@ const Content = (props: any) => {
             mutiSearch(item.desc, searchString) ||
             mutiSearch(item.url, searchString)
           );
+        })
+        .filter((item: any) => {
+          // 子分类过滤
+          if (currentSubCatelogId === null) {
+            return true; // "全部"显示所有
+          }
+          return item.subCatelogId === currentSubCatelogId;
         });
       return [...localResult, ...searchEngineCards]
     } else {
       return [...searchEngineCards];
     }
-  }, [data, currTag, searchString, searchEngineCards]);
+  }, [data, currTag, searchString, searchEngineCards, currentSubCatelogId]);
 
   useEffect(() => {
     filteredDataRef.current = filteredData
@@ -148,101 +162,27 @@ const Content = (props: any) => {
     // eslint-disable-next-line
   }, [searchString])
 
-  // 判断是否需要按子分类分组显示
-  const shouldGroupBySubCatelog = useMemo(() => {
-    // 搜索时不分组
-    if (searchString.trim() !== "") return false;
-    // "全部工具"时不分组
-    if (currTag === "全部工具") return false;
-    // 选择具体大分类时，检查是否有子分类
-    const currentCatelog = data?.catelogs?.find((c: any) => c === currTag);
-    if (!currentCatelog) return false;
+  // 获取当前大分类下的所有子分类
+  const currentSubCatelogs = useMemo(() => {
+    // 搜索时不显示子分类选择器
+    if (searchString.trim() !== "") return [];
+    // "全部工具"时不显示
+    if (currTag === "全部工具") return [];
+    // 没有子分类数据
+    if (!data?.subcatelogs || !data?.tools) return [];
     
-    // 查找该大分类对应的ID
-    const catelogObj = data?.catelogs ? 
-      (typeof currentCatelog === 'string' ? 
-        data.tools?.find((t: any) => t.catelog === currentCatelog) : null) 
-      : null;
-    
-    if (!catelogObj) return false;
-    
-    // 检查是否有子分类
-    const hasSubCatelogs = data?.subcatelogs?.some((sub: any) => 
-      data.tools?.some((t: any) => 
+    // 获取当前大分类下的所有子分类
+    const subCatelogs = data.subcatelogs.filter((sub: any) => 
+      data.tools.some((t: any) => 
         t.catelog === currTag && t.subCatelogId === sub.id
       )
     );
     
-    return hasSubCatelogs;
+    return subCatelogs;
   }, [currTag, searchString, data]);
 
   const renderCardsV2 = useCallback(() => {
-    // 如果需要按子分类分组显示
-    if (shouldGroupBySubCatelog && data?.subcatelogs) {
-      // 获取当前大分类下的所有子分类
-      const subCatelogs = data.subcatelogs.filter((sub: any) => 
-        filteredData.some((tool: any) => tool.subCatelogId === sub.id)
-      ).sort((a: any, b: any) => a.sort - b.sort);
-
-      // 没有分配子分类的书签
-      const toolsWithoutSub = filteredData.filter((tool: any) => 
-        !tool.subCatelogId || tool.subCatelogId === 0
-      );
-
-      return (
-        <>
-          {/* 未分配子分类的书签 */}
-          {toolsWithoutSub.length > 0 && toolsWithoutSub.map((item, index) => (
-            <CardV2
-              title={item.name}
-              url={item.url}
-              des={item.desc}
-              logo={item.logo}
-              key={item.id}
-              catelog={item.catelog}
-              index={index}
-              isSearching={false}
-              noImageMode={data?.siteConfig?.noImageMode || false}
-              compactMode={data?.siteConfig?.compactMode || false}
-              onClick={() => {
-                resetSearch();
-                if (item.url === "toggleJumpTarget") {
-                  toggleJumpTarget();
-                  loadData();
-                }
-              }}
-            />
-          ))}
-          
-          {/* 按子分类分组显示 */}
-          {subCatelogs.map((subCatelog: any) => {
-            const toolsInSub = filteredData.filter((tool: any) => 
-              tool.subCatelogId === subCatelog.id
-            );
-            
-            return (
-              <SubCatelogSection
-                key={subCatelog.id}
-                subCatelog={subCatelog}
-                tools={toolsInSub}
-                searchString={searchString}
-                noImageMode={data?.siteConfig?.noImageMode || false}
-                compactMode={data?.siteConfig?.compactMode || false}
-                onCardClick={resetSearch}
-                onToolClick={(url) => {
-                  if (url === "toggleJumpTarget") {
-                    toggleJumpTarget();
-                    loadData();
-                  }
-                }}
-              />
-            );
-          })}
-        </>
-      );
-    }
-
-    // 默认平铺显示（搜索时或全部工具时）
+    // 直接渲染过滤后的数据
     return filteredData.map((item, index) => {
       return (
         <CardV2
@@ -253,9 +193,11 @@ const Content = (props: any) => {
           key={item.id}
           catelog={item.catelog}
           index={index}
+          cardId={item.id}
           isSearching={searchString.trim() !== ""}
           noImageMode={data?.siteConfig?.noImageMode || false}
           compactMode={data?.siteConfig?.compactMode || false}
+          hideCategoryTag={hideCategoryTag}
           onClick={() => {
             resetSearch();
             if (item.url === "toggleJumpTarget") {
@@ -267,15 +209,41 @@ const Content = (props: any) => {
       );
     });
     // eslint-disable-next-line
-  }, [filteredData, searchString, data?.siteConfig?.noImageMode, data?.siteConfig?.compactMode, shouldGroupBySubCatelog, data?.subcatelogs]);
+  }, [filteredData, searchString, data?.siteConfig?.noImageMode, data?.siteConfig?.compactMode, hideCategoryTag]);
 
-  const onKeyEnter = (ev: KeyboardEvent) => {
+  const onKeyEnter = async (ev: KeyboardEvent) => {
     const cards = filteredDataRef.current;
     // 使用 keyCode 防止与中文输入冲突
     if (ev.keyCode === 13) {
-      if (cards && cards.length) {
-        window.open(cards[0]?.url, "_blank");
-        resetSearch();
+      // 如果有搜索内容
+      if (searchString.trim()) {
+        // 过滤掉搜索引擎卡片，只看普通书签
+        const normalCards = cards.filter(card => card.id < 8800880000);
+        
+        if (normalCards && normalCards.length > 0) {
+          // 有普通书签结果，打开第一个
+          window.open(normalCards[0]?.url, "_blank");
+          resetSearch();
+        } else {
+          // 没有普通书签结果，使用默认搜索引擎
+          try {
+            const defaultEngine = await getDefaultSearchEngine();
+            if (defaultEngine) {
+              const separator = defaultEngine.baseUrl.includes('?') ? '&' : '?';
+              const searchUrl = `${defaultEngine.baseUrl}${separator}${defaultEngine.queryParam}=${encodeURIComponent(searchString)}`;
+              window.open(searchUrl, "_blank");
+              resetSearch();
+            }
+          } catch (error) {
+            console.error('获取默认搜索引擎失败:', error);
+          }
+        }
+      } else {
+        // 没有搜索内容，打开第一个卡片
+        if (cards && cards.length > 0) {
+          window.open(cards[0]?.url, "_blank");
+          resetSearch();
+        }
       }
     }
     // 如果按了数字键 + ctrl/meta，打开对应的卡片
@@ -321,6 +289,17 @@ const Content = (props: any) => {
         </div>
       </div>
       <div className="content-wraper">
+        {/* 子分类选择器 */}
+        {currentSubCatelogs.length > 0 && (
+          <div className="subcatelog-selector-container">
+            <SubCatelogSelector
+              subCatelogs={currentSubCatelogs}
+              currentSubCatelogId={currentSubCatelogId}
+              onSubCatelogChange={setCurrentSubCatelogId}
+            />
+          </div>
+        )}
+        
         <div className={`content cards ${data?.siteConfig?.compactMode ? 'compact-grid' : ''}`}>
           {loading ? <Loading></Loading> : renderCardsV2()}
         </div>

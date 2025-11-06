@@ -20,7 +20,7 @@ func HasApiToken(token string) bool {
 
 // 获取所有搜索引擎（按排序）
 func GetAllSearchEngines() ([]types.SearchEngine, error) {
-	sql := `SELECT id, name, baseUrl, queryParam, logo, sort, enabled FROM nav_search_engine ORDER BY sort ASC`
+	sql := `SELECT id, name, baseUrl, queryParam, logo, sort, enabled, isDefault FROM nav_search_engine ORDER BY sort ASC`
 	rows, err := DB.Query(sql)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func GetAllSearchEngines() ([]types.SearchEngine, error) {
 	var engines []types.SearchEngine
 	for rows.Next() {
 		var engine types.SearchEngine
-		err := rows.Scan(&engine.Id, &engine.Name, &engine.BaseUrl, &engine.QueryParam, &engine.Logo, &engine.Sort, &engine.Enabled)
+		err := rows.Scan(&engine.Id, &engine.Name, &engine.BaseUrl, &engine.QueryParam, &engine.Logo, &engine.Sort, &engine.Enabled, &engine.IsDefault)
 		if err != nil {
 			return nil, err
 		}
@@ -41,7 +41,7 @@ func GetAllSearchEngines() ([]types.SearchEngine, error) {
 
 // 获取启用的搜索引擎（按排序）
 func GetEnabledSearchEngines() ([]types.SearchEngine, error) {
-	sql := `SELECT id, name, baseUrl, queryParam, logo, sort, enabled FROM nav_search_engine WHERE enabled = 1 ORDER BY sort ASC`
+	sql := `SELECT id, name, baseUrl, queryParam, logo, sort, enabled, isDefault FROM nav_search_engine WHERE enabled = 1 ORDER BY sort ASC`
 	rows, err := DB.Query(sql)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func GetEnabledSearchEngines() ([]types.SearchEngine, error) {
 	var engines []types.SearchEngine
 	for rows.Next() {
 		var engine types.SearchEngine
-		err := rows.Scan(&engine.Id, &engine.Name, &engine.BaseUrl, &engine.QueryParam, &engine.Logo, &engine.Sort, &engine.Enabled)
+		err := rows.Scan(&engine.Id, &engine.Name, &engine.BaseUrl, &engine.QueryParam, &engine.Logo, &engine.Sort, &engine.Enabled, &engine.IsDefault)
 		if err != nil {
 			return nil, err
 		}
@@ -132,6 +132,29 @@ func UpdateSearchEngineSort(sortData []struct {
 		if err != nil {
 			return err
 		}
+	}
+	
+	return tx.Commit()
+}
+
+// 设置默认搜索引擎
+func SetDefaultSearchEngine(id int) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	
+	// 先将所有搜索引擎的isDefault设为false
+	_, err = tx.Exec(`UPDATE nav_search_engine SET isDefault = 0`)
+	if err != nil {
+		return err
+	}
+	
+	// 再将指定的搜索引擎设为true
+	_, err = tx.Exec(`UPDATE nav_search_engine SET isDefault = 1 WHERE id = ?`, id)
+	if err != nil {
+		return err
 	}
 	
 	return tx.Commit()

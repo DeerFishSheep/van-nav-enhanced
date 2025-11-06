@@ -192,6 +192,12 @@ export const fetchUpdateSearchEnginesSort = async (updates: { id: number; sort: 
     return data?.data || {};
 };
 
+// 设置默认搜索引擎
+export const fetchSetDefaultSearchEngine = async (id: number) => {
+    const { data } = await axios.put(`/api/admin/searchEngine/${id}/default`);
+    return data?.data || {};
+};
+
 // ==================== 子分类管理接口 ====================
 
 // 获取所有子分类

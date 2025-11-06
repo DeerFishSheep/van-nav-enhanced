@@ -28,7 +28,7 @@ const SearchBar = (props: SearchBarProps) => {
         <input
           id="search-bar"
           type="search"
-          placeholder="按任意键直接开始搜索"
+          placeholder="按任意键开始搜索 · Ctrl+编号可快速打开书签"
           value={props.searchString}
           onChange={(ev) => {
             const v = ev.target.value

@@ -3,7 +3,22 @@ import "./index.css";
 import { getLogoUrl } from "../../utils/check";
 import { getJumpTarget } from "../../utils/setting";
 
-const Card = ({ title, url, des, logo, catelog, onClick, index, isSearching, noImageMode, compactMode }) => {
+interface CardProps {
+  title: any;
+  url: any;
+  des: any;
+  logo: any;
+  catelog: any;
+  onClick: any;
+  index: any;
+  cardId?: number;
+  isSearching: any;
+  noImageMode: any;
+  compactMode: any;
+  hideCategoryTag?: boolean;
+}
+
+const Card: React.FC<CardProps> = ({ title, url, des, logo, catelog, onClick, index, cardId, isSearching, noImageMode, compactMode, hideCategoryTag }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [showLoading, setShowLoading] = useState(true);
@@ -75,6 +90,16 @@ const Card = ({ title, url, des, logo, catelog, onClick, index, isSearching, noI
       : catelog;
   }, [catelog]);
   
+  // 判断是否是内置卡片
+  const isBuiltInCard = useMemo(() => {
+    return url === "admin" || 
+           url === "toggleJumpTarget" || 
+           (cardId !== undefined && cardId >= 8800880000);
+  }, [url, cardId]);
+  
+  // 内置卡片不显示分类标签
+  const shouldShowTag = !compactMode && !hideCategoryTag && !isBuiltInCard && catelog;
+  
   const showNumIndex = index < 10 && isSearching;
   return (
     <a
@@ -96,7 +121,7 @@ const Card = ({ title, url, des, logo, catelog, onClick, index, isSearching, noI
         <div className="card-right">
           <div className="card-right-top">
             <span className="card-right-title" title={title}>{title}</span>
-            {!compactMode && <span className="card-tag" title={displayCatelog}>{displayCatelog}</span>}
+            {shouldShowTag && <span className="card-tag" title={displayCatelog}>{displayCatelog}</span>}
           </div>
           {!compactMode && <div className="card-right-bottom" title={des}>{des}</div>}
         </div>
