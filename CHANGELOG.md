@@ -7,7 +7,6 @@ All notable changes to this project will be documented in this file.
 ### 📢 关于增强版
 
 本版本基于 [Mereithhh](https://github.com/Mereithhh) 的 [van-nav v1.12.1](https://github.com/Mereithhh/van-nav) 进行增强和优化。  
-感谢原作者开源了这么优秀的项目！
 
 ---
 
