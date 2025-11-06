@@ -3,7 +3,7 @@
 > **原作者**: [Mereithhh](https://github.com/Mereithhh)  
 > **原项目**: [van-nav](https://github.com/Mereithhh/van-nav)  
 > **基于版本**: v1.12.1  
-> **本版本**: 增强版，在原版基础上新增子分类系统、智能排序等功能
+> **本版本**: 增强版，在原版基础上优化书签分类、排序等功能
 
 ## API 文档
 
@@ -16,7 +16,7 @@
 **添加书签**：
 ```bash
 curl -X POST http://localhost:6412/api/admin/tool \
-  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Authorization: YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "GitHub",
