@@ -6,58 +6,90 @@
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
-  <div class="container">
+  <div class="page-header">
     <h1>⚙️ Van Nav 扩展设置</h1>
+    <p class="subtitle">配置您的导航站服务器连接</p>
+  </div>
+  
+  <div class="container">
+    <!-- 左侧主表单区域 -->
+    <div class="main-content">
+      <form id="settingsForm">
+        <div class="config-section">
+          <h2 class="section-title">服务器配置</h2>
+          
+          <div class="form-group">
+            <label>服务器地址</label>
+            <input type="text" id="server" placeholder="例如：119.91.23.95" required>
+            <small>输入您的 Van Nav 服务器 IP 或域名</small>
+          </div>
+          
+          <div class="form-group">
+            <label>端口</label>
+            <input type="text" id="port" placeholder="例如：6412" required>
+            <small>输入您的 Van Nav 服务器端口</small>
+          </div>
+          
+          <div class="form-group">
+            <label>访问令牌 (API Token)</label>
+            <input type="password" id="token" placeholder="在后台生成 API Token">
+            <small>在 Van Nav 后台的 API Token 管理中生成</small>
+          </div>
+          
+          <div class="form-group test-group">
+            <button type="button" id="testConnection" class="btn-test">🔍 测试连接</button>
+            <span id="testResult"></span>
+          </div>
+        </div>
+        
+        <div class="config-section">
+          <h2 class="section-title">扩展配置</h2>
+          
+          <div class="form-group shortcut-group">
+            <label>
+              <input type="checkbox" id="enableShortcut" checked>
+              启用快捷键 (Ctrl+E / Command+E)
+            </label>
+            <small>开启后可使用快捷键快速打开扩展</small>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn-primary">💾 保存设置</button>
+          <button type="button" id="resetBtn" class="btn-secondary">🔄 恢复默认</button>
+        </div>
+      </form>
+      
+      <div class="status" id="status"></div>
+    </div>
     
-    <form id="settingsForm">
-      <div class="form-group">
-        <label>服务器地址</label>
-        <input type="text" id="server" placeholder="例如：119.91.23.95" required>
-        <small>输入您的 Van Nav 服务器 IP 或域名</small>
+    <!-- 右侧信息区域 -->
+    <div class="sidebar">
+      <!-- 快捷键设置提示 -->
+      <div class="info-card shortcut-info">
+        <h3 class="card-title">⚡ 快捷键设置</h3>
+        <p class="card-desc">如果快捷键无法使用，请点击下方链接手动设置：</p>
+        <ul class="browser-links">
+          <li><a href="#" data-url="chrome://extensions/shortcuts" class="browser-link">Chrome 浏览器</a></li>
+          <li><a href="#" data-url="edge://extensions/shortcuts" class="browser-link">Edge 浏览器</a></li>
+          <li><a href="#" data-url="brave://extensions/shortcuts" class="browser-link">Brave 浏览器</a></li>
+          <li><a href="#" data-url="opera://extensions/shortcuts" class="browser-link">Opera 浏览器</a></li>
+          <li><a href="#" data-url="vivaldi://extensions/shortcuts" class="browser-link">Vivaldi 浏览器</a></li>
+        </ul>
+        <p class="card-note">💡 建议：<code>Ctrl+E</code> (Win/Linux) 或 <code>Command+E</code> (Mac)</p>
       </div>
       
-      <div class="form-group">
-        <label>端口</label>
-        <input type="text" id="port" placeholder="例如：6412" required>
-        <small>输入您的 Van Nav 服务器端口</small>
+      <!-- 使用说明 -->
+      <div class="info-card help-card">
+        <h3 class="card-title">📖 使用说明</h3>
+        <ol class="help-steps">
+          <li>在 Van Nav 后台生成 API Token</li>
+          <li>填写服务器地址和端口</li>
+          <li>填写 API Token</li>
+          <li>点击"测试连接"确认配置正确</li>
+          <li>保存设置后即可使用扩展添加书签</li>
+        </ol>
       </div>
-      
-      <div class="form-group">
-        <label>访问令牌 (API Token)</label>
-        <input type="password" id="token" placeholder="在后台生成 API Token">
-        <small>在 Van Nav 后台的 API Token 管理中生成</small>
-      </div>
-      
-      <div class="form-group">
-        <button type="button" id="testConnection" class="btn-secondary">🔍 测试连接</button>
-        <span id="testResult"></span>
-      </div>
-      
-      <div class="form-group shortcut-group">
-        <label>
-          <input type="checkbox" id="enableShortcut" checked>
-          启用快捷键 (Ctrl+E / Command+E)
-        </label>
-        <small>开启后可使用快捷键快速打开扩展</small>
-      </div>
-      
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">💾 保存设置</button>
-        <button type="button" id="resetBtn" class="btn-secondary">🔄 恢复默认</button>
-      </div>
-    </form>
-    
-    <div class="status" id="status"></div>
-    
-    <div class="help">
-      <h3>📖 使用说明</h3>
-      <ol>
-        <li>在 Van Nav 后台生成 API Token</li>
-        <li>填写服务器地址和端口</li>
-        <li>填写 API Token</li>
-        <li>点击"测试连接"确认配置正确</li>
-        <li>保存设置后即可使用扩展添加书签</li>
-      </ol>
     </div>
   </div>
   
@@ -65,4 +97,3 @@
   <script src="options.js"></script>
 </body>
 </html>
-

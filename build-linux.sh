@@ -73,7 +73,8 @@ Van-Nav Linux x86_64 发布包
 
 2. SSH到服务器并运行一键部署：
    cd /opt/van-nav
-   sudo ./van-nav-service.sh
+   chmod +x van-nav-service.sh
+   ./van-nav-service.sh
 
 3. 访问服务：
    http://your-server-ip:6412

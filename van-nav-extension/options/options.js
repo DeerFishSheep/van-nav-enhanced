@@ -10,6 +10,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('settingsForm').addEventListener('submit', handleSave);
   document.getElementById('testConnection').addEventListener('click', handleTest);
   document.getElementById('resetBtn').addEventListener('click', handleReset);
+  
+  // 绑定浏览器快捷键设置链接点击事件
+  document.querySelectorAll('.browser-link').forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      const url = e.target.getAttribute('data-url');
+      chrome.tabs.create({ url: url });
+    });
+  });
 });
 
 // 保存设置

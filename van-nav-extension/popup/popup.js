@@ -225,10 +225,13 @@ function bindEvents() {
   // 提交表单
   document.getElementById('bookmarkForm').addEventListener('submit', handleSubmit);
   
-  // 打开设置
-  document.getElementById('settingsBtn').addEventListener('click', () => {
+  // 打开设置（右上角按钮）
+  document.getElementById('settingsBtnHeader').addEventListener('click', () => {
     chrome.runtime.openOptionsPage();
   });
+  
+  // 打开导航站后台
+  document.getElementById('homeBtn').addEventListener('click', handleOpenAdmin);
 }
 
 // 处理文件选择
@@ -494,6 +497,17 @@ async function handleSubmit(e) {
   } catch (error) {
     showStatus('添加失败: ' + error.message, 'error');
   }
+}
+
+// 打开导航站后台
+async function handleOpenAdmin() {
+  if (!currentConfig || !currentConfig.server || !currentConfig.port) {
+    showStatus('⚠️ 请先在设置中配置服务器地址', 'error');
+    return;
+  }
+  
+  const adminUrl = `http://${currentConfig.server}:${currentConfig.port}/admin`;
+  chrome.tabs.create({ url: adminUrl });
 }
 
 // 显示状态消息
