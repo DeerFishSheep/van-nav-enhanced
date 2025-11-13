@@ -2,6 +2,7 @@
 let catelogs = [];
 let subCatelogs = {};
 let currentConfig = null;
+let selectedCategories = []; // 存储已选择的分类组合
 
 // 页面加载时初始化
 document.addEventListener('DOMContentLoaded', async () => {
@@ -178,6 +179,104 @@ async function loadIconPreview(url) {
   iconImage.src = url;
 }
 
+// 添加分类到列表
+function addCategoryToList() {
+  console.log('🔔 addCategoryToList 被调用了');
+  
+  const categorySelect = document.getElementById('category');
+  const subCategorySelect = document.getElementById('subCategory');
+  
+  console.log('📋 categorySelect:', categorySelect);
+  console.log('📋 subCategorySelect:', subCategorySelect);
+  console.log('📋 大分类值:', categorySelect?.value);
+  console.log('📋 子分类值:', subCategorySelect?.value);
+  
+  if (!categorySelect.value) {
+    console.warn('⚠️ 未选择大分类');
+    showStatus('请先选择大分类', 'error');
+    return;
+  }
+  
+  const catelogId = parseInt(categorySelect.value);
+  const catelogName = categorySelect.options[categorySelect.selectedIndex]?.text;
+  const subCatelogId = parseInt(subCategorySelect.value) || 0;
+  const subCatelogName = subCatelogId ? subCategorySelect.options[subCategorySelect.selectedIndex]?.text : '';
+  
+  console.log('📦 准备添加:', { catelogId, catelogName, subCatelogId, subCatelogName });
+  
+  // 检查是否已存在
+  const exists = selectedCategories.some(cat => 
+    cat.catelogId === catelogId && cat.subCatelogId === subCatelogId
+  );
+  
+  if (exists) {
+    console.warn('⚠️ 该分类组合已存在');
+    showStatus('该分类组合已添加', 'error');
+    return;
+  }
+  
+  // 添加到列表
+  selectedCategories.push({
+    catelogId,
+    catelogName,
+    subCatelogId,
+    subCatelogName
+  });
+  
+  console.log('✅ 已添加，当前数组:', selectedCategories);
+  
+  renderCategoryTags();
+  showStatus('✅ 已添加到分类列表', 'success');
+  
+  // 重置选择器（可选）
+  // categorySelect.value = '';
+  // subCategorySelect.value = '';
+}
+
+// 渲染分类标签
+function renderCategoryTags() {
+  console.log('🎨 renderCategoryTags 被调用了');
+  
+  const container = document.getElementById('categoryTags');
+  console.log('📦 container:', container);
+  console.log('📊 selectedCategories 长度:', selectedCategories.length);
+  console.log('📊 selectedCategories 内容:', selectedCategories);
+  
+  if (selectedCategories.length === 0) {
+    console.log('⚠️ 分类数组为空，显示空提示');
+    container.innerHTML = '<span class="empty-hint">请在下方选择分类并添加</span>';
+    return;
+  }
+  
+  const html = selectedCategories.map((cat, index) => {
+    const text = cat.subCatelogName 
+      ? `${cat.catelogName} / ${cat.subCatelogName}`
+      : cat.catelogName;
+    return `
+      <span class="category-tag">
+        ${text}
+        <span class="remove" data-index="${index}">×</span>
+      </span>
+    `;
+  }).join('');
+  
+  console.log('🎨 生成的HTML:', html);
+  container.innerHTML = html;
+  console.log('✅ HTML已更新到容器');
+  
+  // 绑定删除事件
+  container.querySelectorAll('.remove').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const index = parseInt(e.target.dataset.index);
+      selectedCategories.splice(index, 1);
+      renderCategoryTags();
+      showStatus('已移除该分类', 'success');
+    });
+  });
+  
+  console.log('✅ 删除按钮事件已绑定');
+}
+
 // 绑定所有事件
 function bindEvents() {
   // 选择本地图片
@@ -204,15 +303,19 @@ function bindEvents() {
     const catelogId = e.target.value;
     const subCategorySelect = document.getElementById('subCategory');
     const addSubCategoryBtn = document.getElementById('addSubCategoryBtn');
+    const addToListBtn = document.getElementById('addCategoryToList');
     
     if (catelogId) {
       // 加载对应的子分类
       await loadSubCatelogs(catelogId);
+      // 启用"添加到列表"按钮
+      addToListBtn.disabled = false;
     } else {
       // 清空并禁用子分类
       subCategorySelect.innerHTML = '<option value="">请先选择大分类</option>';
       subCategorySelect.disabled = true;
       addSubCategoryBtn.disabled = true;
+      addToListBtn.disabled = true;
     }
   });
   
@@ -221,6 +324,9 @@ function bindEvents() {
   
   // 新增子分类
   document.getElementById('addSubCategoryBtn').addEventListener('click', handleAddSubCategory);
+  
+  // 添加分类到列表
+  document.getElementById('addCategoryToList').addEventListener('click', addCategoryToList);
   
   // 提交表单
   document.getElementById('bookmarkForm').addEventListener('submit', handleSubmit);
@@ -456,24 +562,23 @@ async function handleSubmit(e) {
     return;
   }
   
+  // 验证至少选择一个分类
+  if (selectedCategories.length === 0) {
+    showStatus('❌ 请至少添加一个分类', 'error');
+    return;
+  }
+  
   showStatus('正在添加...', 'loading');
   
   try {
-    // 获取选中的分类名称
-    const categorySelect = document.getElementById('category');
-    const subCategorySelect = document.getElementById('subCategory');
-    
-    const categoryName = categorySelect.options[categorySelect.selectedIndex]?.text || '';
-    const subCategoryName = subCategorySelect.value ? 
-      subCategorySelect.options[subCategorySelect.selectedIndex]?.text : '';
-    
     const bookmark = {
       name: document.getElementById('name').value,
       url: document.getElementById('url').value,
-      des: document.getElementById('description').value,
+      desc: document.getElementById('description').value,
       logo: document.getElementById('iconUrl').value,
-      catelog: categoryName,
-      subCatelog: subCategoryName
+      categories: selectedCategories,  // 发送多分类数组
+      sort: 0,
+      hide: false
     };
     
     const result = await API.addBookmark(currentConfig, bookmark);

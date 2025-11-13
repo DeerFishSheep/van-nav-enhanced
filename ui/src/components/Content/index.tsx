@@ -30,7 +30,10 @@ const Content = (props: any) => {
   const [searchString, setSearchString] = useState("");
   const [val, setVal] = useState("");
   const [searchEngineCards, setSearchEngineCards] = useState<any[]>([]);
-  const [currentSubCatelogId, setCurrentSubCatelogId] = useState<number | null>(null);
+  const [currentSubCatelogId, setCurrentSubCatelogId] = useState<number | null>(() => {
+    const saved = window.localStorage.getItem("currentSubCatelogId");
+    return saved ? parseInt(saved) : null;
+  });
 
   const filteredDataRef = useRef<any>([]);
 
@@ -85,9 +88,19 @@ const Content = (props: any) => {
     loadSearchEngineCards();
   }, [searchString]);
 
+  // 保存子分类选择状态到 localStorage
+  useEffect(() => {
+    if (currentSubCatelogId !== null) {
+      window.localStorage.setItem("currentSubCatelogId", currentSubCatelogId.toString());
+    } else {
+      window.localStorage.removeItem("currentSubCatelogId");
+    }
+  }, [currentSubCatelogId]);
+
   const handleSetCurrTag = (tag: string) => {
     setCurrTag(tag);
     setCurrentSubCatelogId(null); // 切换大分类时重置子分类选择
+    window.localStorage.removeItem("currentSubCatelogId"); // 清除保存的子分类
     // 管理后台不记录了
     if (tag !== "管理后台") {
       window.localStorage.setItem("tag", tag);
@@ -99,10 +112,17 @@ const Content = (props: any) => {
     setVal("");
     setSearchString("");
     setCurrentSubCatelogId(null); // 重置子分类选择
+    window.localStorage.removeItem("currentSubCatelogId"); // 清除保存的子分类
     const tagInLocalStorage = window.localStorage.getItem("tag");
     if (!notSetTag && tagInLocalStorage && tagInLocalStorage !== "" && tagInLocalStorage !== "管理后台") {
       setCurrTag(tagInLocalStorage);
     }
+  };
+
+  // 只清除搜索内容，不重置子分类状态
+  const clearSearchOnly = () => {
+    setVal("");
+    setSearchString("");
   };
 
   const handleSetSearch = (val: string) => {
@@ -121,6 +141,11 @@ const Content = (props: any) => {
           if (currTag === "全部工具") {
             return true;
           }
+          // 支持多分类：检查categories数组中是否有匹配的分类
+          if (item.categories && Array.isArray(item.categories)) {
+            return item.categories.some((cat: any) => cat.catelogName === currTag);
+          }
+          // 兼容旧数据：fallback 到 catelog 字段
           return item.catelog === currTag;
         })
         .filter((item: any) => {
@@ -138,6 +163,11 @@ const Content = (props: any) => {
           if (currentSubCatelogId === null) {
             return true; // "全部"显示所有
           }
+          // 支持多分类：检查categories数组中是否有匹配的子分类
+          if (item.categories && Array.isArray(item.categories)) {
+            return item.categories.some((cat: any) => cat.subCatelogId === currentSubCatelogId);
+          }
+          // 兼容旧数据：fallback 到 subCatelogId 字段
           return item.subCatelogId === currentSubCatelogId;
         });
       return [...localResult, ...searchEngineCards]
@@ -171,11 +201,18 @@ const Content = (props: any) => {
     // 没有子分类数据
     if (!data?.subcatelogs || !data?.tools) return [];
     
-    // 获取当前大分类下的所有子分类
+    // 获取当前大分类下的所有子分类（支持多分类）
     const subCatelogs = data.subcatelogs.filter((sub: any) => 
-      data.tools.some((t: any) => 
-        t.catelog === currTag && t.subCatelogId === sub.id
-      )
+      data.tools.some((t: any) => {
+        // 支持多分类：检查categories数组
+        if (t.categories && Array.isArray(t.categories)) {
+          return t.categories.some((cat: any) => 
+            cat.catelogName === currTag && cat.subCatelogId === sub.id
+          );
+        }
+        // 兼容旧数据
+        return t.catelog === currTag && t.subCatelogId === sub.id;
+      })
     );
     
     return subCatelogs;
@@ -199,7 +236,11 @@ const Content = (props: any) => {
           compactMode={data?.siteConfig?.compactMode || false}
           hideCategoryTag={hideCategoryTag}
           onClick={() => {
-            resetSearch();
+            // 只在有搜索内容时才清除搜索，不重置子分类状态
+            if (searchString.trim() !== "") {
+              clearSearchOnly();
+            }
+            
             if (item.url === "toggleJumpTarget") {
               toggleJumpTarget();
               loadData();

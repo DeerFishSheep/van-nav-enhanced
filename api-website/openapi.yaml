@@ -10,6 +10,23 @@ servers:
 
 components:
   schemas:
+    ToolCategory:
+      type: object
+      description: 书签的分类组合（大分类+子分类）
+      properties:
+        catelogId:
+          type: integer
+          description: 大分类ID
+        catelogName:
+          type: string
+          description: 大分类名称
+        subCatelogId:
+          type: integer
+          description: 子分类ID（0表示无子分类）
+        subCatelogName:
+          type: string
+          description: 子分类名称（空字符串表示无子分类）
+
     Tool:
       type: object
       properties:
@@ -27,13 +44,21 @@ components:
           description: Logo URL
         catelog:
           type: string
-          description: 大分类名称
+          description: 大分类名称（兼容字段，仅用于向后兼容）
+          deprecated: true
         subCatelog:
           type: string
-          description: 子分类名称
+          description: 子分类名称（兼容字段，仅用于向后兼容）
+          deprecated: true
         subCatelogId:
           type: integer
-          description: 子分类ID
+          description: 子分类ID（兼容字段，仅用于向后兼容）
+          deprecated: true
+        categories:
+          type: array
+          description: 多分类支持 - 书签的所有分类组合列表（推荐使用）
+          items:
+            $ref: "#/components/schemas/ToolCategory"
         desc:
           type: string
           description: 描述
@@ -49,7 +74,6 @@ components:
       required:
         - name
         - url
-        - catelog
       properties:
         name:
           type: string
@@ -62,10 +86,27 @@ components:
           description: Logo URL（可选，为空则自动获取）
         catelog:
           type: string
-          description: 大分类名称（不存在会自动创建）
+          description: |
+            【旧方式 - 单分类】大分类名称（不存在会自动创建）
+            兼容字段，如果使用 categories 则忽略此字段
+          deprecated: true
         subCatelog:
           type: string
-          description: 子分类名称（可选，为空时分配到"未归类"子分类，不存在会自动创建）
+          description: |
+            【旧方式 - 单分类】子分类名称（可选，为空时分配到"未归类"子分类，不存在会自动创建）
+            兼容字段，如果使用 categories 则忽略此字段
+          deprecated: true
+        categories:
+          type: array
+          description: |
+            【新方式 - 多分类】书签的分类组合列表（推荐使用）
+            - 可以指定多个大分类和子分类组合
+            - 书签将在所有指定的分类下显示
+            - 优先级高于 catelog/subCatelog 字段
+            - 至少需要一个分类组合
+          items:
+            $ref: "#/components/schemas/ToolCategory"
+          minItems: 1
         desc:
           type: string
           description: 描述
@@ -95,10 +136,27 @@ components:
           description: Logo URL
         catelog:
           type: string
-          description: 大分类名称
+          description: |
+            【旧方式 - 单分类】大分类名称
+            兼容字段，如果使用 categories 则忽略此字段
+          deprecated: true
         subCatelog:
           type: string
-          description: 子分类名称
+          description: |
+            【旧方式 - 单分类】子分类名称
+            兼容字段，如果使用 categories 则忽略此字段
+          deprecated: true
+        categories:
+          type: array
+          description: |
+            【新方式 - 多分类】书签的分类组合列表（推荐使用）
+            - 可以指定多个大分类和子分类组合
+            - 书签将在所有指定的分类下显示
+            - 优先级高于 catelog/subCatelog 字段
+            - 更新时会完全替换原有的分类列表
+          items:
+            $ref: "#/components/schemas/ToolCategory"
+          minItems: 1
         desc:
           type: string
           description: 描述
@@ -709,17 +767,83 @@ paths:
       security:
         - BearerAuth: []
       description: |
-        添加新工具。说明：
-        - catelog: 大分类名称（必填），不存在会自动创建
-        - subCatelog: 子分类名称（可选），为空时自动分配到"未归类"子分类，不存在会自动创建
+        添加新工具。支持两种方式：
+        
+        **推荐方式 - 多分类支持：**
+        使用 `categories` 数组字段，可以让一个书签属于多个分类：
+        ```json
+        {
+          "name": "示例工具",
+          "url": "https://example.com",
+          "categories": [
+            {
+              "catelogId": 1,
+              "catelogName": "开发工具",
+              "subCatelogId": 5,
+              "subCatelogName": "前端开发"
+            },
+            {
+              "catelogId": 2,
+              "catelogName": "效率工具",
+              "subCatelogId": 0,
+              "subCatelogName": ""
+            }
+          ]
+        }
+        ```
+        
+        **兼容方式 - 单分类（已过时）：**
+        使用 `catelog` 和 `subCatelog` 字段（仅支持单一分类）：
+        ```json
+        {
+          "name": "示例工具",
+          "url": "https://example.com",
+          "catelog": "开发工具",
+          "subCatelog": "前端开发"
+        }
+        ```
+        
+        **说明：**
+        - 优先使用 `categories`，如果提供了 `categories` 则忽略 `catelog/subCatelog`
         - sort: 排序值（可选），为空时自动分配为最大值+1
         - logo: Logo URL（可选），为空则自动获取
+        - 旧方式中大分类/子分类不存在时会自动创建，子分类为空时分配到"未归类"
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/AddToolDto"
+            examples:
+              multiCategory:
+                summary: 多分类示例（推荐）
+                value:
+                  name: "Visual Studio Code"
+                  url: "https://code.visualstudio.com"
+                  logo: "https://code.visualstudio.com/favicon.ico"
+                  desc: "强大的代码编辑器"
+                  categories:
+                    - catelogId: 1
+                      catelogName: "开发工具"
+                      subCatelogId: 3
+                      subCatelogName: "代码编辑器"
+                    - catelogId: 2
+                      catelogName: "效率工具"
+                      subCatelogId: 0
+                      subCatelogName: ""
+                  sort: 0
+                  hide: false
+              singleCategory:
+                summary: 单分类示例（兼容旧方式）
+                value:
+                  name: "Visual Studio Code"
+                  url: "https://code.visualstudio.com"
+                  logo: "https://code.visualstudio.com/favicon.ico"
+                  desc: "强大的代码编辑器"
+                  catelog: "开发工具"
+                  subCatelog: "代码编辑器"
+                  sort: 0
+                  hide: false
       responses:
         "200":
           description: 添加成功
@@ -752,6 +876,17 @@ paths:
       summary: 更新工具
       security:
         - BearerAuth: []
+      description: |
+        更新工具信息。支持两种方式：
+        
+        **推荐方式 - 多分类支持：**
+        使用 `categories` 数组字段，可以让一个书签属于多个分类。
+        注意：更新时会完全替换原有的分类列表。
+        
+        **兼容方式 - 单分类（已过时）：**
+        使用 `catelog` 和 `subCatelog` 字段（仅支持单一分类）。
+        
+        优先使用 `categories`，如果提供了 `categories` 则忽略 `catelog/subCatelog`。
       parameters:
         - name: id
           in: path
@@ -765,6 +900,38 @@ paths:
           application/json:
             schema:
               $ref: "#/components/schemas/UpdateToolDto"
+            examples:
+              multiCategory:
+                summary: 多分类示例（推荐）
+                value:
+                  id: 1
+                  name: "Visual Studio Code"
+                  url: "https://code.visualstudio.com"
+                  logo: "https://code.visualstudio.com/favicon.ico"
+                  desc: "强大的代码编辑器"
+                  categories:
+                    - catelogId: 1
+                      catelogName: "开发工具"
+                      subCatelogId: 3
+                      subCatelogName: "代码编辑器"
+                    - catelogId: 2
+                      catelogName: "效率工具"
+                      subCatelogId: 0
+                      subCatelogName: ""
+                  sort: 10
+                  hide: false
+              singleCategory:
+                summary: 单分类示例（兼容旧方式）
+                value:
+                  id: 1
+                  name: "Visual Studio Code"
+                  url: "https://code.visualstudio.com"
+                  logo: "https://code.visualstudio.com/favicon.ico"
+                  desc: "强大的代码编辑器"
+                  catelog: "开发工具"
+                  subCatelog: "代码编辑器"
+                  sort: 10
+                  hide: false
       responses:
         "200":
           description: 更新成功

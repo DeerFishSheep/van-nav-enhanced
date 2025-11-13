@@ -1,0 +1,91 @@
+.category-tag-selector {
+  width: 100%;
+}
+
+.selected-categories {
+  min-height: 36px;
+  padding: 6px;
+  background-color: #fafafa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.selected-categories .empty-hint {
+  color: #999;
+  font-size: 12px;
+}
+
+.category-tag {
+  margin: 0 !important;
+  font-size: 12px !important;
+  padding: 4px 8px !important;
+  line-height: 1.4 !important;
+  cursor: default;
+  background: #1890ff !important;
+  color: white !important;
+  border-radius: 3px !important;
+  border: none !important;
+}
+
+.category-tag .anticon-close {
+  margin-left: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.category-tag .anticon-close:hover {
+  color: #ffdddd;
+}
+
+.add-category-section {
+  width: 100%;
+}
+
+.select-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.select-row .ant-select {
+  flex: 1;
+}
+
+.select-row .ant-btn {
+  white-space: nowrap;
+}
+
+.add-to-list-btn {
+  width: 100%;
+  border-color: #52c41a !important;
+  color: #52c41a !important;
+}
+
+.add-to-list-btn:hover:not(:disabled) {
+  background: #52c41a !important;
+  color: white !important;
+  border-color: #52c41a !important;
+}
+
+.add-to-list-btn:disabled {
+  border-color: #ddd !important;
+  color: #999 !important;
+  cursor: not-allowed;
+}
+
+/* 暗色主题适配 */
+.ant-theme-dark .selected-categories {
+  background-color: #141414;
+  border-color: #434343;
+}
+
+.ant-theme-dark .empty-hint {
+  color: #595959;
+}
+

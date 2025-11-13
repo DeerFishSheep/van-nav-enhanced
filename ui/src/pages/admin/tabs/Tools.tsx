@@ -13,7 +13,8 @@ import {
   Upload,
   message,
   Tooltip,
-  Switch
+  Switch,
+  Tag
 } from "antd";
 import { QuestionCircleOutlined, HolderOutlined } from '@ant-design/icons';
 import React, { useCallback, useState, useEffect, useContext, useMemo } from "react";
@@ -29,6 +30,7 @@ import {
   fetchAddSubCatelog,
 } from "../../../utils/api";
 import { useData } from "../hooks/useData";
+import CategoryTagSelector, { ToolCategory } from "../../../components/CategoryTagSelector";
 import type { DragEndEvent } from '@dnd-kit/core';
 import { DndContext } from '@dnd-kit/core';
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities';
@@ -346,15 +348,34 @@ export const Tools: React.FC<ToolsProps> = (props) => {
           } else {
             show = mutiSearch(item.name, searchString) || mutiSearch(item.desc, searchString);
           }
+          
+          // 大分类筛选 - 支持多分类
           if (!catelogName || catelogName === "") {
             show = show && true;
           } else {
-            show = show && mutiSearch(item.catelog, catelogName);
+            // 检查 categories 数组中是否有任何分类匹配
+            if (item.categories && item.categories.length > 0) {
+              show = show && item.categories.some((cat: any) => 
+                mutiSearch(cat.catelogName, catelogName)
+              );
+            } else {
+              // 兼容旧数据：如果没有 categories，fallback 到 catelog
+              show = show && mutiSearch(item.catelog, catelogName);
+            }
           }
-          // 子分类筛选
+          
+          // 子分类筛选 - 支持多分类
           if (subCatelog !== undefined) {
-            show = show && item.subCatelog === subCatelog;
+            if (item.categories && item.categories.length > 0) {
+              show = show && item.categories.some((cat: any) => 
+                cat.subCatelogName === subCatelog
+              );
+            } else {
+              // 兼容旧数据
+              show = show && item.subCatelog === subCatelog;
+            }
           }
+          
           return show;
         })
         .sort((a: DataType, b: DataType) => {
@@ -568,19 +589,26 @@ export const Tools: React.FC<ToolsProps> = (props) => {
               />
               <Table.Column
                 title="分类"
-                dataIndex="catelog"
-                width={60}
-                filters={getFilter(store?.catelogs || [])}
-                onFilter={(value: any, record: any) => {
-                  return value === record["catelog"];
-                }}
-              />
-              <Table.Column
-                title="子分类"
-                dataIndex="subCatelog"
-                width={80}
-                render={(subCatelog: string) => {
-                  return subCatelog || '-';
+                dataIndex="categories"
+                width={200}
+                render={(categories: ToolCategory[]) => {
+                  if (!categories || categories.length === 0) {
+                    return '-';
+                  }
+                  return (
+                    <Space size={[0, 4]} wrap>
+                      {categories.map((cat, index) => {
+                        const text = cat.subCatelogName 
+                          ? `${cat.catelogName} / ${cat.subCatelogName}`
+                          : cat.catelogName;
+                        return (
+                          <Tag key={index} color="blue" style={{ margin: 0 }}>
+                            {text}
+                          </Tag>
+                        );
+                      })}
+                    </Space>
+                  );
                 }}
               />
               <Table.Column
@@ -698,84 +726,45 @@ export const Tools: React.FC<ToolsProps> = (props) => {
               <Input placeholder="请输入 logo url, 为空则自动获取" />
             </Form.Item>
             <Form.Item
-              label="大分类"
-              labelCol={{ span: 4 }}
-              required
-              rules={[{ required: true, message: "请选择大分类" }]}
-            >
-              <Space.Compact style={{ width: '100%' }}>
-                <Form.Item 
-                  name="catelog" 
-                  noStyle
-                  rules={[{ required: true, message: "请选择大分类" }]}
-                >
-                  <Select
-                    style={{ flex: 1 }}
-                    options={getOptions(store?.catelogs || [])}
-                    placeholder="请选择大分类"
-                    onChange={(value) => {
-                      // 清空子分类选择
-                      addForm.setFieldValue('subCatelog', undefined);
-                      // 更新选中的大分类状态
-                      setSelectedAddCatelog(value);
-                    }}
-                  />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  onClick={() => setShowAddCatelogModal(true)}
-                >
-                  新增大分类
-                </Button>
-              </Space.Compact>
-            </Form.Item>
-            <Form.Item
+              name="categories"
               label={
                 <span>
-                  子分类
-                  <Tooltip title="可选，选择具体的子分类">
+                  分类
+                  <Tooltip title="可以选择多个分类，书签将在所有选中的分类下显示">
                     <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
                   </Tooltip>
                 </span>
               }
               labelCol={{ span: 4 }}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (!value || value.length === 0) {
+                      return Promise.reject('请至少选择一个分类');
+                    }
+                    return Promise.resolve();
+                  }
+                }
+              ]}
             >
-              <Space.Compact style={{ width: '100%' }}>
-                <Form.Item name="subCatelog" noStyle>
-                  <Select
-                    style={{ flex: 1 }}
-                    allowClear
-                    options={
-                      selectedAddCatelog
-                        ? (store?.subcatelogs || [])
-                            .filter((sub: any) => {
-                              const selectedCatelog = (store?.catelogs || []).find(
-                                (c: any) => c.name === selectedAddCatelog
-                              );
-                              return selectedCatelog && sub.catelogId === selectedCatelog.id;
-                            })
-                            .map((sub: any) => ({ label: sub.name, value: sub.name }))
-                        : []
-                    }
-                    placeholder="请先选择大分类，然后选择子分类（可选）"
-                  />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  disabled={!selectedAddCatelog}
-                  onClick={() => {
-                    const selectedCatelog = (store?.catelogs || []).find(
-                      (c: any) => c.name === selectedAddCatelog
-                    );
-                    if (selectedCatelog) {
-                      addSubCatelogForm.setFieldValue('catelogId', selectedCatelog.id);
-                      setShowAddSubCatelogModal(true);
-                    }
-                  }}
-                >
-                  新增子分类
-                </Button>
-              </Space.Compact>
+              <CategoryTagSelector
+                catelogs={store?.catelogs || []}
+                subcatelogs={store?.subcatelogs || []}
+                onAddCatelog={() => setShowAddCatelogModal(true)}
+                onAddSubCatelog={() => {
+                  // 获取当前表单中选择的分类，默认选中第一个大分类
+                  const categories = addForm.getFieldValue('categories');
+                  const defaultCatelogId = categories && categories.length > 0 
+                    ? categories[0].catelogId 
+                    : (store?.catelogs && store.catelogs.length > 0 ? store.catelogs[0].id : undefined);
+                  
+                  addSubCatelogForm.resetFields();
+                  if (defaultCatelogId) {
+                    addSubCatelogForm.setFieldsValue({ catelogId: defaultCatelogId });
+                  }
+                  setShowAddSubCatelogModal(true);
+                }}
+              />
             </Form.Item>
             <Form.Item
               rules={[{ required: true, message: "请填写描述" }]}
@@ -856,79 +845,45 @@ export const Tools: React.FC<ToolsProps> = (props) => {
               <Input placeholder="请输入 logo url, 为空则自动获取" />
             </Form.Item>
             <Form.Item
-              name="catelog"
-              required
-              label="大分类"
-              labelCol={{ span: 4 }}
-            >
-              <Space.Compact style={{ width: '100%' }}>
-                <Form.Item name="catelog" noStyle>
-                  <Select
-                    style={{ flex: 1 }}
-                    options={getOptions(store?.catelogs || [])}
-                    placeholder="请选择大分类"
-                    onChange={(value) => {
-                      updateForm.setFieldValue('subCatelog', undefined);
-                      setSelectedUpdateCatelog(value);
-                    }}
-                  />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  onClick={() => setShowAddCatelogModal(true)}
-                >
-                  新增大分类
-                </Button>
-              </Space.Compact>
-            </Form.Item>
-            <Form.Item
-              name="subCatelog"
+              name="categories"
               label={
                 <span>
-                  子分类
-                  <Tooltip title="可选，选择具体的子分类">
+                  分类
+                  <Tooltip title="可以选择多个分类，书签将在所有选中的分类下显示">
                     <QuestionCircleOutlined style={{ marginLeft: '5px' }} />
                   </Tooltip>
                 </span>
               }
               labelCol={{ span: 4 }}
+              rules={[
+                {
+                  validator: (_, value) => {
+                    if (!value || value.length === 0) {
+                      return Promise.reject('请至少选择一个分类');
+                    }
+                    return Promise.resolve();
+                  }
+                }
+              ]}
             >
-              <Space.Compact style={{ width: '100%' }}>
-                <Form.Item name="subCatelog" noStyle>
-                  <Select
-                    style={{ flex: 1 }}
-                    allowClear
-                    options={
-                      selectedUpdateCatelog
-                        ? (store?.subcatelogs || [])
-                            .filter((sub: any) => {
-                              const selectedCatelog = (store?.catelogs || []).find(
-                                (c: any) => c.name === selectedUpdateCatelog
-                              );
-                              return selectedCatelog && sub.catelogId === selectedCatelog.id;
-                            })
-                            .map((sub: any) => ({ label: sub.name, value: sub.name }))
-                        : []
-                    }
-                    placeholder="请先选择大分类，然后选择子分类（可选）"
-                  />
-                </Form.Item>
-                <Button
-                  type="primary"
-                  disabled={!selectedUpdateCatelog}
-                  onClick={() => {
-                    const selectedCatelog = (store?.catelogs || []).find(
-                      (c: any) => c.name === selectedUpdateCatelog
-                    );
-                    if (selectedCatelog) {
-                      addSubCatelogForm.setFieldValue('catelogId', selectedCatelog.id);
-                      setShowAddSubCatelogModal(true);
-                    }
-                  }}
-                >
-                  新增子分类
-                </Button>
-              </Space.Compact>
+              <CategoryTagSelector
+                catelogs={store?.catelogs || []}
+                subcatelogs={store?.subcatelogs || []}
+                onAddCatelog={() => setShowAddCatelogModal(true)}
+                onAddSubCatelog={() => {
+                  // 获取当前表单中选择的分类，默认选中第一个大分类
+                  const categories = updateForm.getFieldValue('categories');
+                  const defaultCatelogId = categories && categories.length > 0 
+                    ? categories[0].catelogId 
+                    : (store?.catelogs && store.catelogs.length > 0 ? store.catelogs[0].id : undefined);
+                  
+                  addSubCatelogForm.resetFields();
+                  if (defaultCatelogId) {
+                    addSubCatelogForm.setFieldsValue({ catelogId: defaultCatelogId });
+                  }
+                  setShowAddSubCatelogModal(true);
+                }}
+              />
             </Form.Item>
             <Form.Item name="desc" required label="描述" labelCol={{ span: 4 }}>
               <Input placeholder="请输入描述" />
@@ -1041,11 +996,12 @@ export const Tools: React.FC<ToolsProps> = (props) => {
               name="catelogId"
               label="所属大分类"
               labelCol={{ span: 6 }}
+              rules={[{ required: true, message: "请选择所属大分类" }]}
             >
               <Select
-                disabled
+                placeholder="请选择所属大分类"
                 options={(store?.catelogs || []).map((c: any) => ({
-                  label: c.name,
+                  label: `${c.name} (${c.toolCount || 0} 个书签)`,
                   value: c.id
                 }))}
               />

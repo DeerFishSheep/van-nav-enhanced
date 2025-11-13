@@ -41,6 +41,7 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
   const [showSubAddModal, setShowSubAddModal] = useState(false);
   const [showSubEditModal, setShowSubEditModal] = useState(false);
   const [currentCatelogId, setCurrentCatelogId] = useState<number | null>(null);
+  const [currentCatelogName, setCurrentCatelogName] = useState<string>("");
 
   // 大分类操作
   const handleDelete = useCallback(
@@ -179,6 +180,9 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
               header={
                 <Space>
                   <strong>{catelog.name}</strong>
+                  <span style={{ color: '#1890ff' }}>
+                    ({catelog.toolCount || 0} 个书签)
+                  </span>
                   <span style={{ color: '#999' }}>
                     (排序: {catelog.sort}, 隐藏: {catelog.hide ? '是' : '否'})
                   </span>
@@ -213,6 +217,7 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
                     icon={<PlusOutlined />}
                     onClick={() => {
                       setCurrentCatelogId(catelog.id);
+                      setCurrentCatelogName(catelog.name);
                       subAddForm.resetFields();
                       setShowSubAddModal(true);
                     }}
@@ -230,6 +235,12 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
               >
                 <Table.Column title="ID" dataIndex="id" width={80} />
                 <Table.Column title="子分类名称" dataIndex="name" />
+                <Table.Column
+                  title="书签数量"
+                  dataIndex="toolCount"
+                  width={100}
+                  render={(count) => count || 0}
+                />
                 <Table.Column
                   title={
                     <span>
@@ -411,7 +422,10 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
         }}
       >
         <Form form={subAddForm}>
-          <Form.Item name="name" required label="名称" labelCol={{ span: 4 }}>
+          <Form.Item label="所属大分类" labelCol={{ span: 6 }}>
+            <Input disabled value={currentCatelogName} />
+          </Form.Item>
+          <Form.Item name="name" required label="名称" labelCol={{ span: 6 }}>
             <Input placeholder="请输入子分类名称" />
           </Form.Item>
           <Form.Item
@@ -426,7 +440,7 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
                 &nbsp;排序
               </span>
             }
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
           >
             <InputNumber
               placeholder="默认排在最后，可手动指定"
@@ -447,7 +461,7 @@ export const Catelog: React.FC<CatelogProps> = (props) => {
                 &nbsp;隐藏
               </span>
             }
-            labelCol={{ span: 4 }}
+            labelCol={{ span: 6 }}
           >
             <Switch checkedChildren="开" unCheckedChildren="关" />
           </Form.Item>

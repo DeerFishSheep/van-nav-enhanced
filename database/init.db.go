@@ -148,6 +148,27 @@ func InitDB() {
 	_, err = DB.Exec(sql_create_table)
 	utils.CheckErr(err)
 
+	// 书签分类关联表（多对多关系）
+	sql_create_table = `
+		CREATE TABLE IF NOT EXISTS nav_tool_category_relation (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			tool_id INTEGER NOT NULL,
+			catelog_id INTEGER NOT NULL,
+			subcatelog_id INTEGER DEFAULT 0,
+			FOREIGN KEY (tool_id) REFERENCES nav_table(id) ON DELETE CASCADE,
+			FOREIGN KEY (catelog_id) REFERENCES nav_catelog(id) ON DELETE CASCADE,
+			FOREIGN KEY (subcatelog_id) REFERENCES nav_subcatelog(id) ON DELETE SET DEFAULT
+		);
+		`
+	_, err = DB.Exec(sql_create_table)
+	utils.CheckErr(err)
+	
+	// 为关联表创建索引以提高查询性能
+	_, err = DB.Exec(`CREATE INDEX IF NOT EXISTS idx_tool_category_tool_id ON nav_tool_category_relation(tool_id);`)
+	utils.CheckErr(err)
+	_, err = DB.Exec(`CREATE INDEX IF NOT EXISTS idx_tool_category_catelog_id ON nav_tool_category_relation(catelog_id);`)
+	utils.CheckErr(err)
+
 	// api token 表
 	sql_create_table = `
 		CREATE TABLE IF NOT EXISTS nav_api_token (

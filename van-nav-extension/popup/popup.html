@@ -62,10 +62,18 @@
         <input type="text" id="iconUrl" placeholder="自动获取或手动输入">
       </div>
       
+      <!-- 已选分类标签列表 -->
+      <div class="form-group">
+        <label>已选分类</label>
+        <div class="category-tags" id="categoryTags">
+          <span class="empty-hint">请在下方选择分类并添加</span>
+        </div>
+      </div>
+      
       <div class="form-group">
         <label>大分类</label>
         <div class="select-with-button">
-          <select id="category" required>
+          <select id="category">
             <option value="">请选择大分类</option>
           </select>
           <button type="button" id="addCategoryBtn" class="btn-add">+ 新增</button>
@@ -80,6 +88,14 @@
           </select>
           <button type="button" id="addSubCategoryBtn" class="btn-add" disabled>+ 新增</button>
         </div>
+      </div>
+      
+      <!-- 添加分类到列表按钮 -->
+      <div class="form-group">
+        <label></label>
+        <button type="button" id="addCategoryToList" class="btn-add-to-list" disabled>
+          ➕ 添加到分类列表
+        </button>
       </div>
       
       <div class="form-actions">

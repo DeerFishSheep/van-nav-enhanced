@@ -553,3 +553,113 @@ func ReorderSubCatelogsAfterSortChange(catelogId int, oldSort, newSort int) erro
 
 	return tx.Commit()
 }
+
+// ==================== 书签分类关联表操作 ====================
+
+// GetToolCategories 获取指定书签的所有分类关系
+func GetToolCategories(toolId int) ([]types.ToolCategory, error) {
+	sql := `
+		SELECT r.catelog_id, c.name, r.subcatelog_id, COALESCE(s.name, '') as subcatelog_name
+		FROM nav_tool_category_relation r
+		LEFT JOIN nav_catelog c ON r.catelog_id = c.id
+		LEFT JOIN nav_subcatelog s ON r.subcatelog_id = s.id
+		WHERE r.tool_id = ?
+		ORDER BY c.sort, s.sort
+	`
+	rows, err := DB.Query(sql, toolId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var categories []types.ToolCategory
+	for rows.Next() {
+		var cat types.ToolCategory
+		err := rows.Scan(&cat.CatelogId, &cat.CatelogName, &cat.SubCatelogId, &cat.SubCatelogName)
+		if err != nil {
+			return nil, err
+		}
+		categories = append(categories, cat)
+	}
+	return categories, nil
+}
+
+// AddToolCategory 添加书签分类关联
+func AddToolCategory(toolId, catelogId, subcatelogId int) error {
+	sql := `INSERT INTO nav_tool_category_relation (tool_id, catelog_id, subcatelog_id) VALUES (?, ?, ?)`
+	_, err := DB.Exec(sql, toolId, catelogId, subcatelogId)
+	return err
+}
+
+// DeleteToolCategories 删除指定书签的所有分类关联
+func DeleteToolCategories(toolId int) error {
+	sql := `DELETE FROM nav_tool_category_relation WHERE tool_id = ?`
+	_, err := DB.Exec(sql, toolId)
+	return err
+}
+
+// UpdateToolCategories 更新书签的分类关联（先删除旧的，再插入新的）
+func UpdateToolCategories(toolId int, categories []types.ToolCategory) error {
+	tx, err := DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// 删除现有关联
+	_, err = tx.Exec(`DELETE FROM nav_tool_category_relation WHERE tool_id = ?`, toolId)
+	if err != nil {
+		return err
+	}
+
+	// 插入新关联
+	stmt, err := tx.Prepare(`INSERT INTO nav_tool_category_relation (tool_id, catelog_id, subcatelog_id) VALUES (?, ?, ?)`)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	for _, cat := range categories {
+		_, err = stmt.Exec(toolId, cat.CatelogId, cat.SubCatelogId)
+		if err != nil {
+			return err
+		}
+	}
+
+	return tx.Commit()
+}
+
+// CheckToolCategoryExists 检查指定的书签分类组合是否已存在
+func CheckToolCategoryExists(toolId, catelogId, subcatelogId int) (bool, error) {
+	var count int
+	sql := `SELECT COUNT(*) FROM nav_tool_category_relation WHERE tool_id = ? AND catelog_id = ? AND subcatelog_id = ?`
+	err := DB.QueryRow(sql, toolId, catelogId, subcatelogId).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
+// ==================== 书签数量统计 ====================
+
+// GetToolCountByCatelog 获取指定大分类下的书签总数（基于关联表）
+func GetToolCountByCatelog(catelogId int) (int, error) {
+	var count int
+	sql := `SELECT COUNT(DISTINCT tool_id) FROM nav_tool_category_relation WHERE catelog_id = ?`
+	err := DB.QueryRow(sql, catelogId).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// GetToolCountBySubCatelog 获取指定子分类下的书签总数（基于关联表）
+func GetToolCountBySubCatelog(subcatelogId int) (int, error) {
+	var count int
+	sql := `SELECT COUNT(DISTINCT tool_id) FROM nav_tool_category_relation WHERE subcatelog_id = ?`
+	err := DB.QueryRow(sql, subcatelogId).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}

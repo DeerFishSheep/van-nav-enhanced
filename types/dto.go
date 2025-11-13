@@ -31,25 +31,27 @@ type AddCatelogDto struct {
 	Hide bool   `json:"hide"`
 }
 type UpdateToolDto struct {
-	Id         int    `json:"id"`
-	Name       string `json:"name"`
-	Url        string `json:"url"`
-	Logo       string `json:"logo"`
-	Catelog    string `json:"catelog"`
-	SubCatelog string `json:"subCatelog"`
-	Desc       string `json:"desc"`
-	Sort       int    `json:"sort"`
-	Hide       bool   `json:"hide"`
+	Id         int            `json:"id"`
+	Name       string         `json:"name"`
+	Url        string         `json:"url"`
+	Logo       string         `json:"logo"`
+	Catelog    string         `json:"catelog"`    // 保留用于兼容性
+	SubCatelog string         `json:"subCatelog"` // 保留用于兼容性
+	Categories []ToolCategory `json:"categories"` // 新增：多分类支持
+	Desc       string         `json:"desc"`
+	Sort       int            `json:"sort"`
+	Hide       bool           `json:"hide"`
 }
 type AddToolDto struct {
-	Name       string `json:"name"`
-	Url        string `json:"url"`
-	Logo       string `json:"logo"`
-	Catelog    string `json:"catelog"`
-	SubCatelog string `json:"subCatelog"`
-	Desc       string `json:"desc"`
-	Sort       int    `json:"sort"`
-	Hide       bool   `json:"hide"`
+	Name       string         `json:"name"`
+	Url        string         `json:"url"`
+	Logo       string         `json:"logo"`
+	Catelog    string         `json:"catelog"`    // 保留用于兼容性
+	SubCatelog string         `json:"subCatelog"` // 保留用于兼容性
+	Categories []ToolCategory `json:"categories"` // 新增：多分类支持
+	Desc       string         `json:"desc"`
+	Sort       int            `json:"sort"`
+	Hide       bool           `json:"hide"`
 }
 type UpdateToolsSortDto struct {
 	Id   int `json:"id"`

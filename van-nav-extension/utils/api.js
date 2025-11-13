@@ -69,13 +69,24 @@ const API = {
       throw new Error('未配置访问令牌，请先在设置中配置');
     }
     
+    // 准备请求体（支持新格式 categories 数组）
+    const requestBody = {
+      name: bookmark.name,
+      url: bookmark.url,
+      desc: bookmark.desc || bookmark.des || '',  // 兼容旧字段名
+      logo: bookmark.logo || '',
+      categories: bookmark.categories || [],  // 新格式：多分类数组
+      sort: bookmark.sort || 0,
+      hide: bookmark.hide || false
+    };
+    
     const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': token
       },
-      body: JSON.stringify(bookmark)
+      body: JSON.stringify(requestBody)
     });
     
     if (!response.ok) {

@@ -178,6 +178,16 @@ func GetAllCatelog() []types.Catelog {
 		var catelog types.Catelog
 		err = rows.Scan(&catelog.Id, &catelog.Name, &catelog.Sort, &catelog.Hide)
 		utils.CheckErr(err)
+		
+		// 获取该大分类下的书签数量
+		count, err := database.GetToolCountByCatelog(catelog.Id)
+		if err != nil {
+			logger.LogError("获取大分类[%s]的书签数量失败: %v", catelog.Name, err)
+			catelog.ToolCount = 0
+		} else {
+			catelog.ToolCount = count
+		}
+		
 		results = append(results, catelog)
 	}
 	defer rows.Close()

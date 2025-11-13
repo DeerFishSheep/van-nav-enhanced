@@ -15,6 +15,18 @@ func GetAllSubCatelog() []types.SubCatelog {
 		logger.LogError("获取所有子分类失败: %v", err)
 		return []types.SubCatelog{}
 	}
+	
+	// 为每个子分类填充书签数量
+	for i := range subcatelogs {
+		count, err := database.GetToolCountBySubCatelog(subcatelogs[i].Id)
+		if err != nil {
+			logger.LogError("获取子分类[%s]的书签数量失败: %v", subcatelogs[i].Name, err)
+			subcatelogs[i].ToolCount = 0
+		} else {
+			subcatelogs[i].ToolCount = count
+		}
+	}
+	
 	return subcatelogs
 }
 

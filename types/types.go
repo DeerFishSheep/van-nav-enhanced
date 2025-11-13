@@ -32,24 +32,34 @@ type Img struct {
 	Value string `json:"value"`
 }
 
-type Tool struct {
-	Id           int    `json:"id"`
-	Name         string `json:"name"`
-	Url          string `json:"url"`
-	Logo         string `json:"logo"`
-	Catelog      string `json:"catelog"`
-	SubCatelog   string `json:"subCatelog"`
+// ToolCategory 表示一个书签的分类组合（大分类+子分类）
+type ToolCategory struct {
+	CatelogId    int    `json:"catelogId"`
+	CatelogName  string `json:"catelogName"`
 	SubCatelogId int    `json:"subCatelogId"`
-	Desc         string `json:"desc"`
-	Sort         int    `json:"sort"`
-	Hide         bool   `json:"hide"`
+	SubCatelogName string `json:"subCatelogName"`
+}
+
+type Tool struct {
+	Id           int            `json:"id"`
+	Name         string         `json:"name"`
+	Url          string         `json:"url"`
+	Logo         string         `json:"logo"`
+	Catelog      string         `json:"catelog"`      // 保留用于兼容性
+	SubCatelog   string         `json:"subCatelog"`   // 保留用于兼容性
+	SubCatelogId int            `json:"subCatelogId"` // 保留用于兼容性
+	Categories   []ToolCategory `json:"categories"`   // 新增：多分类支持
+	Desc         string         `json:"desc"`
+	Sort         int            `json:"sort"`
+	Hide         bool           `json:"hide"`
 }
 
 type Catelog struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Sort int    `json:"sort"`
-	Hide bool   `json:"hide"`
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	Sort      int    `json:"sort"`
+	Hide      bool   `json:"hide"`
+	ToolCount int    `json:"toolCount"` // 书签数量统计
 }
 
 // 子分类模型
@@ -59,6 +69,7 @@ type SubCatelog struct {
 	CatelogId int    `json:"catelogId"`
 	Sort      int    `json:"sort"`
 	Hide      bool   `json:"hide"`
+	ToolCount int    `json:"toolCount"` // 书签数量统计
 }
 
 // 搜索引擎模型

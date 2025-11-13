@@ -207,6 +207,72 @@ body {
   cursor: not-allowed;
 }
 
+/* 分类标签列表 */
+.category-tags {
+  flex: 1;
+  min-height: 36px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fafafa;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: #1890ff;
+  color: white;
+  border-radius: 3px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.category-tag .remove {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  padding-left: 2px;
+}
+
+.category-tag .remove:hover {
+  color: #ffdddd;
+}
+
+.empty-hint {
+  color: #999;
+  font-size: 12px;
+}
+
+.btn-add-to-list {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #52c41a;
+  border-radius: 4px;
+  background: white;
+  color: #52c41a;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-add-to-list:hover:not(:disabled) {
+  background: #52c41a;
+  color: white;
+}
+
+.btn-add-to-list:disabled {
+  border-color: #ddd;
+  color: #999;
+  cursor: not-allowed;
+}
+
 .form-group textarea {
   resize: vertical;
   font-family: inherit;
